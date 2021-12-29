@@ -10,7 +10,7 @@
     name: base
 
 - import_role:
-    name: stuvusit.systemd-timesyncd
+    name: ntp
 
 - import_role:
     name: docker

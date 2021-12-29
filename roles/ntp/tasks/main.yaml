@@ -1,9 +1,4 @@
 ---
-- name: Set timezone
-  timezone:
-    name: "{{ timesync_timezone }}"
-  notify: systemd-timesyncd configuration changed
-
 - name: Configure systemd-timesyncd
   template:
     src: timesyncd.conf.j2
@@ -13,8 +8,11 @@
     group: root
   notify: systemd-timesyncd configuration changed
 
-- name: Start and enable systemd-timesyncd
-  service:
+- name: Enable timesyncd
+  systemd:
     name: systemd-timesyncd.service
     enabled: yes
-    state: started
+  notify: Start timesyncd
+
+- name: Enable ntp
+  command: timedatectl set-ntp true

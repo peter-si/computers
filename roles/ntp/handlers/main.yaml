@@ -1,8 +1,13 @@
 ---
+- name: Start timesyncd
+  systemd: name=systemd-timesyncd.service state=started
+  when: running_in_chroot == False
+
 - name: Restart systemd-timesyncd
   service:
     name: systemd-timesyncd.service
     state: restarted
+  when: ansible_virtualization_role == "host" or ansible_virtualization_role == "NA"
   listen: systemd-timesyncd configuration changed
 
 - name: Write adjtime
