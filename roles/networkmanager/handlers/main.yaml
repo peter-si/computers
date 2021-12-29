@@ -3,10 +3,10 @@
   systemd:
     name: NetworkManager-dispatcher.service
     state: started
-  when: running_in_chroot == False
+  when: ansible_virtualization_role == "host" or ansible_virtualization_role == "NA"
 
 - name: start NetworkManager
   systemd:
     name: NetworkManager.service
     state: started
-  when: running_in_chroot == False
+  when: ansible_virtualization_role == "host" or ansible_virtualization_role == "NA"

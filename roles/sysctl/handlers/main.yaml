@@ -1,4 +1,4 @@
 ---
 - name: reload sysctl
   command: sysctl --system
-  when: running_in_chroot == False
+  when: ansible_virtualization_role == "host" or ansible_virtualization_role == "NA"

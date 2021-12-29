@@ -4,4 +4,4 @@
     name: greenclip.service
     scope: user
     state: started
-  when: running_in_chroot == False
+  when: ansible_virtualization_role == "host" or ansible_virtualization_role == "NA"

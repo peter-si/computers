@@ -1,20 +1,20 @@
 ---
 - name: restart sshd
   systemd: name=sshd.socket state=restarted
-  when: ssh_enable_sshd == True and running_in_chroot == False
+  when: ssh_enable_sshd == True and ansible_virtualization_role == "host" or ansible_virtualization_role == "NA"
 
 - name: start sshd
   systemd: name=sshd.service enabled=yes state=started
-  when: ssh_enable_sshd == True and running_in_chroot == False
+  when: ssh_enable_sshd == True and ansible_virtualization_role == "host" or ansible_virtualization_role == "NA"
 
 - name: stop sshd
   systemd: name=sshd.service enabled=no state=stopped
-  when: ssh_enable_sshd == False and running_in_chroot == False
+  when: ssh_enable_sshd == False and ansible_virtualization_role == "host" or ansible_virtualization_role == "NA"
 
 - name: restart paccache
   systemd: name=paccache.timer state=restarted
-  when: running_in_chroot == False
+  when: ansible_virtualization_role == "host" or ansible_virtualization_role == "NA"
 
 - name: start paccache
   systemd: name=paccache.timer state=started
-  when: running_in_chroot == False
+  when: ansible_virtualization_role == "host" or ansible_virtualization_role == "NA"

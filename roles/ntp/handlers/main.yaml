@@ -1,7 +1,7 @@
 ---
 - name: Start timesyncd
   systemd: name=systemd-timesyncd.service state=started
-  when: running_in_chroot == False
+  when: ansible_virtualization_role == "host" or ansible_virtualization_role == "NA"
 
 - name: Restart systemd-timesyncd
   service:

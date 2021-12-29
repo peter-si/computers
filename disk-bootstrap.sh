@@ -135,7 +135,7 @@ function install_system() {
     --bind-ro=/sys:/sys \
     --bind-ro=/sys/firmware/efi/efivars:/sys/firmware/efi/efivars \
     --directory=/mnt \
-      ansible-playbook /install/playbook.yaml -i /install/local -l "$host" --extra-vars "user_password=$(cat $root_pass_file) running_in_chroot=True disable_swap=${disableSwap} root_partition=${systemPath} ssh_user_dir='/install/.ssh'"
+      ansible-playbook /install/playbook.yaml -i /install/local -l "$host" --extra-vars "user_password=$(cat $root_pass_file) disable_swap=${disableSwap} root_partition=${systemPath} ssh_user_dir='/install/.ssh'"
 }
 
 function add_key_file() {
