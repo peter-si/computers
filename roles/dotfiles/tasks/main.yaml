@@ -1,32 +1,32 @@
 ---
-- name: dotfiles | yadm dotfiles manager
-  ansible.builtin.package:
-    name: yadm
-
-- name: dotfiles | check dotfiles already cloned.
-  become: true
-  ansible.builtin.stat:
-    path: /home/{{ user.name }}/.local/share/yadm/repo.git
-  register: dotfiles
-
-- name: dotfiles | clone dotfiles project
-  ansible.builtin.command: "yadm clone --bootstrap {{ user.dotfiles }}"
-  become: true
+- name: Clone dotfiles to user home
   become_user: "{{ user.name }}"
-  when: not dotfiles.stat.exists
+  become: yes
+  git:
+    repo: "{{ dotfiles.url }}"
+    dest: /home/{{ user.name }}/{{ dotfiles.name }}
+    recursive: yes
+    bare: yes
+    key_file: /home/{{ user.name }}/.ssh/id_rsa
 
-- name: Copy zshrc to root
-  synchronize:
-    dest: "/root/"
-    src: "/home/{{ user.name }}/.zshrc"
-    archive: no
-  notify: zplug install as root
+- name: Checkout dotfiles
+  become_user: "{{ user.name }}"
+  become: yes
+  command: git --git-dir=/home/{{ user.name }}/.dotfiles.git --work-tree=/home/{{ user.name }} checkout --force
 
-- name: Copy powerlevel to root
-  synchronize:
-    dest: "/root/"
-    src: "/home/{{ user.name }}/.p10k.zsh"
-    archive: no
+- name: Remove README from home
+  file:
+    path: /home/{{ user.name }}/README.md
+    state: absent
 
-- name: zplug install as root
-  shell: cmd="zplug install"
+- name: Creates directory for runable scripts
+  become_user: "{{ user.name }}"
+  become: yes
+  file:
+    path: "/home/{{ user.name }}/.local/bin"
+    state: directory
+    mode: 0775
+    recurse: yes
+
+- include: zsh.yaml
+#- include: bitwarden.yaml

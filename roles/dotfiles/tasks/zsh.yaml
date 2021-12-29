@@ -1,0 +1,19 @@
+---
+- name: Install zplug
+  become: yes
+  become_user: "{{ user.name }}"
+  aur: name=zplug
+  notify: zplug install as user
+
+- name: Copy zshrc to root
+  synchronize:
+    dest: "/root/"
+    src: "/home/{{ user.name }}/.zshrc"
+    archive: no
+  notify: zplug install as root
+
+- name: Copy powerlevel to root
+  synchronize:
+    dest: "/root/"
+    src: "/home/{{ user.name }}/.p10k.zsh"
+    archive: no
