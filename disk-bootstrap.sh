@@ -125,7 +125,7 @@ function bootstrap_arch() {
 function install_system() {
   banner "Installing system"
   systemd-nspawn --bind-ro=/install:/install --directory=/mnt /install/root-pass.sh "$(cat $root_pass_file)"
-  systemd-nspawn --bind-ro=/install:/install --directory=/mnt ansible-galaxy install -r
+  systemd-nspawn --bind-ro=/install:/install --directory=/mnt ansible-galaxy install -r /install/galaxy-requirements.yaml
   systemd-nspawn \
     --as-pid2 \
     --register=no \
