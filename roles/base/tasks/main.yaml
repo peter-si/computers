@@ -67,6 +67,7 @@
     path: "/etc/sysctl.d/90-hardening.conf"
     line: "{{ item }}={{ harden_linux_sysctl_settings[item] }}"
     create: yes
+  loop: "{{ harden_linux_sysctl_settings|flatten }}"
   notify:
     - reload sysctl
 
