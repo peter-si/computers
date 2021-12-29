@@ -71,7 +71,6 @@
   notify:
     - reload sysctl
 
-
 - name: Restrict user login with PAM
   ansible.builtin.blockinfile:
     block: |
@@ -92,17 +91,18 @@
 - import_tasks: resolvd.yaml
 - import_tasks: sudo.yaml
 - import_tasks: journal.yaml
+
+- name: Install base packages
+  ansible.builtin.package:
+    name: "{{ base_packages }}"
+    state: present
+
 - name: Include distribution specific package manager files
   include_tasks: "{{ item }}"
   with_first_found:
     - files:
         - package-manager-{{ ansible_distribution }}.yaml
       skip: true
-
-- name: Install base packages
-  ansible.builtin.package:
-    name: "{{ base_packages }}"
-    state: present
 
 - name: Enable base services
   ansible.builtin.systemd: name={{ item }}.service enabled=yes
