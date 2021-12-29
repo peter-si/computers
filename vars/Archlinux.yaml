@@ -14,7 +14,7 @@ base_packages_distro:
   - cairo
   - pkgfile
   - openssh
-  - x11-ask-pass
+  - x11-ssh-askpass
 
 
   - fwupd
