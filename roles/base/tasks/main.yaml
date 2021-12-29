@@ -5,9 +5,10 @@
     state: present
 
 - name: Set the hostname
-  ansible.builtin.hostname:
-    name: "{{ hostname }}"
-    use: systemd
+  lineinfile:
+    path: /etc/hostname
+    line: "{{ hostname }}"
+    create: yes
 
 - name: Add localhost to hosts
   ansible.builtin.lineinfile:

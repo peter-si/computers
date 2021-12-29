@@ -9,6 +9,7 @@
 
 - name: Install bootclt bootloader
   command: bootctl install
+  ignore_errors: yes
 
 - name: Copy bootctl config
   template:
@@ -29,3 +30,4 @@
 
 - name: Update bootclt bootloader
   command: bootctl update
+  ignore_errors: yes
