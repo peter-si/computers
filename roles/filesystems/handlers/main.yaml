@@ -1,0 +1,8 @@
+---
+- name: start filesystem TRIM timer
+  systemd: name=btrfs-trim.timer state=started
+  when: ansible_virtualization_role == "host" or ansible_virtualization_role == "NA"
+
+- name: start filesystem Balance timer
+  systemd: name=btrfs-balance.timer state=started
+  when: ansible_virtualization_role == "host" or ansible_virtualization_role == "NA"
