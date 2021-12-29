@@ -10,3 +10,11 @@
 - name: stop sshd
   systemd: name=sshd.service enabled=no state=stopped
   when: ssh_enable_sshd == False and running_in_chroot == False
+
+- name: restart paccache
+  systemd: name=paccache.timer state=restarted
+  when: running_in_chroot == False
+
+- name: start paccache
+  systemd: name=paccache.timer state=started
+  when: running_in_chroot == False

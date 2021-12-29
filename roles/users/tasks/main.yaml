@@ -64,7 +64,7 @@
     group: "{{ user.group }}"
     mode: 0700
 
-- name: Start user systemd instance
+- name: Enable user systemd instance
   ansible.builtin.systemd:
     name: "user@{{ user.uid }}"
     enabled: yes
