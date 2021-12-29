@@ -5,7 +5,7 @@
     state: present
 
 - name: Set the hostname
-  lineinfile:
+  ansible.builtin.lineinfile:
     path: /etc/hostname
     line: "{{ hostname }}"
     create: yes
@@ -62,20 +62,14 @@
   tags:
     - sysctl
 
-- name: Create sysctl hardening config file
-  ansible.builtin.file:
-    path: "/etc/sysctl.d/90-hardening.conf"
-    state: touch
-
 - name: Sysctl settings
-  ansible.builtin.sysctl:
-    name: "{{ item }}"
-    value: "{{ harden_linux_sysctl_settings[item] }}"
-    sysctl_set: true
-    sysctl_file: "/etc/sysctl.d/90-hardening.conf"
-  loop: "{{ harden_linux_sysctl_settings|flatten }}"
-  tags:
-    - sysctl
+  ansible.builtin.lineinfile:
+    path: "/etc/sysctl.d/90-hardening.conf"
+    line: "{{ item }}={{ harden_linux_sysctl_settings[item] }}"
+    create: yes
+  notify:
+    - reload sysctl
+
 
 - name: Restrict user login with PAM
   ansible.builtin.blockinfile:
