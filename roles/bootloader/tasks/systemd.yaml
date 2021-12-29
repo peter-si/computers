@@ -1,4 +1,7 @@
 ---
+- name: Make sure pacman hooks dir exists
+  file: path=/etc/pacman.d/hooks state=directory mode="0755"
+
 - name: Copy pacman hook for bootclt
   copy:
     src: 100-systemd-boot.hook

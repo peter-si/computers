@@ -1,3 +1,6 @@
 ---
+roles:
+  - src: stuvusit.systemd-timesyncd
+
 collections:
   - kewlfft.aur

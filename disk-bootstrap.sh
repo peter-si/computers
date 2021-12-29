@@ -108,7 +108,7 @@ function create_subvolumes() {
 function mount_volumes() {
   banner "Mounting volumes"
   o=defaults,discard,x-mount.mkdir
-  o_btrfs=$o,compress=lzo,ssd,space_cache,noatime
+  o_btrfs=$o,compress=lzo,ssd,space_cache=v2,noatime
   mount -t btrfs -o subvol=root,$o_btrfs LABEL=system /mnt
   mount -t btrfs -o subvol=home,$o_btrfs LABEL=system /mnt/home
   mount -t btrfs -o subvol=snapshots,$o_btrfs LABEL=system /mnt/.snapshots
@@ -125,6 +125,7 @@ function bootstrap_arch() {
 function install_system() {
   banner "Installing system"
   systemd-nspawn --bind-ro=/install:/install --directory=/mnt /install/root-pass.sh "$(cat $root_pass_file)"
+  systemd-nspawn --bind-ro=/install:/install --directory=/mnt ansible-galaxy install -r
   systemd-nspawn \
     --as-pid2 \
     --register=no \
