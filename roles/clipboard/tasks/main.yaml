@@ -1,0 +1,5 @@
+---
+- import_tasks: clipman.yaml
+  when: clipboard == 'clipman'
+- import_tasks: greenclip.yaml
+  when: clipboard == 'greenclip'

@@ -1,0 +1,32 @@
+---
+- name: Install filesystem packages
+  ansible.builtin.package:
+    name:
+      - dosfstools
+      - ntfs-3g
+      - exfat-utils
+    state: present
+
+- name: Install btrfs tools
+  block:
+    - name: Install filesystem packages
+      ansible.builtin.package:
+        name:
+          - btrfs-progs
+          - snapper
+          - snap-pac
+        state: present
+
+    - name: Copy snapper config
+      copy:
+        dest: /etc/snapper/configs/root
+        src: root
+      tags: snapper
+  when: btrfs is defined and btrfs == True
+
+- name: Include distribution specific btrfs tools
+  include_tasks: "{{ item }}"
+  with_first_found:
+    - files:
+        - btrfs-{{ ansible_distribution }}.yaml
+      skip: true

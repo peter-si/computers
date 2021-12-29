@@ -1,0 +1,9 @@
+---
+all:
+  children:
+    workstations:
+      hosts:
+        work-laptop:
+          ansible_connection: local
+        desktop:
+          ansible_connection: local

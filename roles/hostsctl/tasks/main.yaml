@@ -1,0 +1,19 @@
+---
+- name: Install hostsctl
+  become: yes
+  become_user: "{{ user.name }}"
+  kewlfft.aur.aur: name=hostsctl
+  tags:
+    - aur
+
+- name: Push hostsctl config
+  ansible.builtin.template: src=hostsctl.conf.j2 dest=/etc/hostsctl.conf
+
+- name: Update hostsctl
+  ansible.builtin.command: hostsctl update
+
+- name: Update hostsctl regulary
+  ansible.builtin.copy:
+    src: update-hostsctl.sh
+    dest: /etc/cron.monthly/update-hostsctl
+    mode: 0755

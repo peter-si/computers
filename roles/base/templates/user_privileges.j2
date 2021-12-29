@@ -1,0 +1,13 @@
+## {{ ansible_managed }}
+##
+## User privilege specification
+##
+Defaults editor=/usr/bin/rnano
+Defaults:%wheel timestamp_timeout=60
+
+root ALL=(ALL) ALL
+%wheel ALL=(ALL) ALL
+
+{% for entry in passwordless_sudo %}
+{{ user.name }} ALL=(ALL) NOPASSWD:{{ entry }}
+{% endfor %}

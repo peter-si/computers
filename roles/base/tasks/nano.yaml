@@ -1,0 +1,16 @@
+---
+- name: Create local nano directory
+  ansible.builtin.file:
+    path: "/usr/local/share/nano"
+    state: directory
+    mode: 755
+
+- name: Copy nano files
+  ansible.builtin.synchronize:
+    dest: "/usr/local/share"
+    src: "files/nano"
+
+- name: Copy nanorc for root
+  ansible.builtin.copy:
+    dest: "/root/.nanorc"
+    src: "files/nanorc"

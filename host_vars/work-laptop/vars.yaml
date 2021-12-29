@@ -1,0 +1,10 @@
+---
+hostname: aluwork
+
+video_drivers:
+  - amdgpu
+  - nvidia
+
+browser_chooser: wofi
+clipboard: clipman
+desktop_environment: sway

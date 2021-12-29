@@ -1,0 +1,12 @@
+---
+- name: start NetworkManager dispatcher
+  systemd:
+    name: NetworkManager-dispatcher.service
+    state: started
+  when: running_in_chroot == False
+
+- name: start NetworkManager
+  systemd:
+    name: NetworkManager.service
+    state: started
+  when: running_in_chroot == False

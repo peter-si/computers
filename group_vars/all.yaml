@@ -1,0 +1,76 @@
+---
+user:
+  name: alulord
+  uid: 1000
+  group: users
+  shell: /usr/bin/zsh
+  log:
+    dir: .log
+    rotate: 8
+  region: Europe
+  city: Bratislava
+  dotfiles: git@github.com:peter-si/arch-dotfiles.git
+
+journal:
+  max_size: 500M
+
+ssh_enable_sshd: False
+ssh_port: 22
+
+gnupg:
+  enable_agent: True
+  emulate_ssh: True
+
+hostsctl_url: https://raw.githubusercontent.com/StevenBlack/hosts/master/hosts
+
+user_password: default
+running_in_chroot: False
+
+timesync_timezone: "{{ user.region }}/{{ user.city }}"
+timesync_ntp_hosts:
+  - europe.pool.ntp.org
+timesync_fallback_ntp_hosts:
+  - 0.arch.pool.ntp.org
+  - 1.arch.pool.ntp.org
+  - 2.arch.pool.ntp.org
+  - 3.arch.pool.ntp.org
+
+harden_linux_sysctl_settings_user:
+
+passwordless_sudo:
+  - /usr/bin/openvpn
+  - /usr/bin/pacman
+
+
+# Add this to "sysctl_settings_user" to enable ipv6 privacy addressing
+# "net.ipv6.conf.default.use_tempaddr": 2
+# "net.ipv6.conf.all.use_tempaddr": 2
+harden_linux_sysctl_settings:
+  "net.ipv4.tcp_syncookies": 1                     # Enable syn flood protection
+  "net.ipv4.conf.all.accept_source_route": 0       # Ignore source-routed packets
+  "net.ipv6.conf.all.accept_source_route": 0       # IPv6 - Ignore ICMP redirects
+  "net.ipv4.conf.default.accept_source_route": 0   # Ignore source-routed packets
+  "net.ipv6.conf.default.accept_source_route": 0   # IPv6 - Ignore source-routed packets
+  "net.ipv4.conf.all.accept_redirects": 0          # Ignore ICMP redirects
+  "net.ipv6.conf.all.accept_redirects": 0          # IPv6 - Ignore ICMP redirects
+  "net.ipv4.conf.default.accept_redirects": 0      # Ignore ICMP redirects
+  "net.ipv6.conf.default.accept_redirects": 0      # IPv6 - Ignore ICMP redirects
+  "net.ipv4.conf.all.secure_redirects": 1          # Ignore ICMP redirects from non-GW hosts
+  "net.ipv4.conf.default.secure_redirects": 1      # Ignore ICMP redirects from non-GW hosts
+  "net.ipv4.ip_forward": 0                         # Do not allow traffic between networks or act as a router
+  "net.ipv6.conf.all.forwarding": 0                # IPv6 - Do not allow traffic between networks or act as a router
+  "net.ipv4.conf.all.send_redirects": 0            # Don't allow traffic between networks or act as a router
+  "net.ipv4.conf.default.send_redirects": 0        # Don't allow traffic between networks or act as a router
+  "net.ipv4.conf.all.rp_filter": 1                 # Reverse path filtering - IP spoofing protection
+  "net.ipv4.conf.default.rp_filter": 1             # Reverse path filtering - IP spoofing protection
+  "net.ipv4.icmp_echo_ignore_broadcasts": 1        # Ignore ICMP broadcasts to avoid participating in Smurf attacks
+  "net.ipv4.icmp_ignore_bogus_error_responses": 1  # Ignore bad ICMP errors
+  "net.ipv4.icmp_echo_ignore_all": 0               # Ignore bad ICMP errors
+  "net.ipv4.conf.all.log_martians": 1              # Log spoofed, source-routed, and redirect packets
+  "net.ipv4.conf.default.log_martians": 1          # Log spoofed, source-routed, and redirect packets
+  "net.ipv4.tcp_rfc1337": 1                        # Implement RFC 1337 fix
+  "kernel.randomize_va_space": 2                   # Randomize addresses of mmap base, heap, stack and VDSO page
+  "fs.protected_hardlinks": 1                      # Provide protection from ToCToU races
+  "fs.protected_symlinks": 1                       # Provide protection from ToCToU races
+  "kernel.kptr_restrict": 1                        # Make locating kernel addresses more difficult
+  "kernel.perf_event_paranoid": 2                  # Set perf only available to root

@@ -1,0 +1,26 @@
+---
+- name: Install XFCE and i3 packages
+  pacman:
+    name:
+      - sway
+      - swayidle
+      - xorg-xwayland
+      - xdg-desktop-portal-wlr
+      - wf-recorder
+      - mako
+    state: present
+
+- name: Install XFCE and i3 aur packages
+  become: yes
+  become_user: "{{ user.name }}"
+  kewlfft.aur.aur:
+    name:
+      - autotiling-git
+      - swaylock-effects
+      - swayr
+      - wpgtk
+      - slurp
+      - grimshot
+      - nwg-panel
+  tags:
+    - aur

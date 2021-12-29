@@ -1,0 +1,16 @@
+---
+- name: dotfiles | yadm dotfiles manager
+  ansible.builtin.package:
+    name: yadm
+
+- name: dotfiles | check dotfiles already cloned.
+  become: true
+  ansible.builtin.stat:
+    path: /home/{{ user.name }}/.local/share/yadm/repo.git
+  register: dotfiles
+
+- name: dotfiles | clone dotfiles project
+  ansible.builtin.command: "yadm clone {{ user.dotfiles }}"
+  become: true
+  become_user: "{{ user.name }}"
+  when: not dotfiles.stat.exists

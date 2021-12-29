@@ -1,0 +1,121 @@
+---
+- name: Install LightDM
+  pacman:
+    name:
+      - lightdm
+#      - lightdm-gtk-greeter
+      - lightdm-webkit2-greeter
+      - accountsservice
+#      - numlockx
+    state: present
+
+- name: Install LightDM
+  become: yes
+  become_user: "{{ user.name }}"
+  kewlfft.aur.aur:
+    name:
+      - lightdm-webkit-theme-aether
+    state: present
+
+- name: Create autologin group
+  group:
+    name: autologin
+    state: present
+
+- name: Create nopasswdlogin group
+  group:
+    name: nopasswdlogin
+    state: present
+
+#- name: Add the user to autologin group
+#  user: name={{ user.name }} groups=autologin append=yes
+#  tags:
+#    - user
+
+#- name: Add the user to nopasswdlogin group
+#  user: name={{ user.name }} groups=nopasswdlogin append=yes
+#  tags:
+#    - user
+
+- name: Copy lightdm greeters config
+  copy:
+    dest: /etc/lightdm/
+    src: "{{ item }}"
+  with_items:
+#    - lightdm-gtk-greeter.conf
+    - lightdm-webkit2-greeter.conf
+
+- name: Specify LightDM greeter session
+  lineinfile:
+    dest: /etc/lightdm/lightdm.conf
+    regexp: "^\\#?greeter-session="
+    line: "greeter-session=lightdm-webkit2-greeter"
+
+- name: Specify LightDM greeter session wrapper
+  lineinfile:
+    dest: /etc/lightdm/lightdm.conf
+    regexp: "^\\#?session-wrapper="
+    line: "session-wrapper=/etc/lightdm/Xsession"
+
+#- name: Specify LightDM greeter greeter setup script
+#  lineinfile:
+#    dest: /etc/lightdm/lightdm.conf
+#    regexp: "^\\#?greeter-setup-script="
+#    line: "greeter-setup-script=/usr/bin/numlockx on"
+#
+#- name: Specify LightDM greeter session setup script
+#  lineinfile:
+#    dest: /etc/lightdm/lightdm.conf
+#    regexp: "^\\#?session-setup-script="
+#    line: "session-setup-script=/usr/bin/numlockx on"
+
+- name: Specify LightDM greeter autologin user
+  lineinfile:
+    dest: /etc/lightdm/lightdm.conf
+    regexp: "^\\#?autologin-user="
+    line: "autologin-user={{ user.name }}"
+
+#- name: Specify LightDM greeter autologin session
+#  lineinfile:
+#    dest: /etc/lightdm/lightdm.conf
+#    regexp: "^\\#?autologin-session=i3"
+#    line: "autologin-session=i3"
+
+- name: Add nopasswdlogin to lightdm pam config
+  lineinfile:
+    dest: /etc/pam.d/lightdm
+    line: "auth        sufficient  pam_succeed_if.so user ingroup nopasswdlogin"
+    insertafter: "^\\#\\%PAM"
+    firstmatch: yes
+
+- name: Enable LightDM
+  systemd: name=lightdm.service enabled=yes
+
+- name: Allow lightdm to login with PAM
+  lineinfile:
+    line: "+:lightdm:LOCAL"
+    insertbefore: '\+:root:LOCAL'
+    dest: /etc/security/access.conf
+
+- name: Copy user icon
+  copy:
+    src: archlinux-user.png
+    dest: /usr/share/icons/archlinux-user.png
+
+- name: Make localstorage dir
+  file:
+    path: /var/lib/lightdm/.local/share/webkitgtk
+    state: directory
+    recurse: yes
+    owner: lightdm
+    group: lightdm
+    mode: 0700
+
+- name: Copy localstorage
+  copy:
+    src: localstorage
+    dest: /var/lib/lightdm/.local/share/webkitgtk
+    owner: lightdm
+    group: lightdm
+    mode: 0700
+    directory_mode: 0700

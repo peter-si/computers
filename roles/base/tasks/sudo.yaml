@@ -1,0 +1,23 @@
+---
+- name: Install sudo
+  ansible.builtin.package: name=sudo state=present
+  tags:
+    - sudo
+
+- name: Add user to wheel group
+  ansible.builtin.user: name={{ user.name }} groups=wheel append=yes
+  tags:
+    - sudo
+    - user
+
+- name: Load additional configs
+  ansible.builtin.lineinfile:
+    path: /etc/sudoers
+    line: '@includedir /etc/sudoers.d'
+    regexp: '^#+\s*@includedir\s+\/etc\/sudoers\.d'
+    state: present
+
+- name: Copy sudo configuration
+  ansible.builtin.template: src=user_privileges.j2 dest=/etc/sudoers.d/user_privileges mode=0440 validate='visudo -cf %s'
+  tags:
+    - sudo

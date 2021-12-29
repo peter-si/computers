@@ -1,0 +1,21 @@
+---
+- name: Install VirtualBox and dependencies
+  pacman:
+    name:
+      - net-tools
+      - virtualbox
+      - virtualbox-guest-iso
+      - virtualbox-host-dkms
+    state: present
+
+- name: Install VirtualBox extensions
+  become: yes
+  become_user: "{{ user.name }}"
+  kewlfft.aur.aur: name=virtualbox-ext-oracle
+  tags:
+    - aur
+
+- name: Add the user to vboxusers group
+  user: name={{ user.name }} groups=vboxusers append=yes
+  tags:
+    - user

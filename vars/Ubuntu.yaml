@@ -1,0 +1,10 @@
+enabled_services_distro:
+  - cron
+
+base_packages_distro:
+  - cron
+  - openssh-client
+  - openssh-server
+
+additional_packages_distro:
+  - avahi-daemon

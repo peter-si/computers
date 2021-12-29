@@ -1,0 +1,14 @@
+---
+- name: reload systemd config
+  command: systemctl daemon-reload
+  when: running_in_chroot == False
+
+- name: start base services
+  ansible.builtin.systemd: name={{ item }}.service state=started
+  with_items: "{{ enabled_services }}"
+  when: running_in_chroot == False
+
+- name: start additional services
+  ansible.builtin.systemd: name={{ item }}.service state=started
+  with_items: "{{ additional_enabled_services }}"
+  when: running_in_chroot == False

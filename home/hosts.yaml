@@ -1,0 +1,12 @@
+---
+all:
+  children:
+    servers:
+      hosts:
+        home-server:
+          ansible_host: alu-kube-admin
+          ansible_connection: ssh
+          ansible_user: alulord
+          ansible_become: yes
+#           ansible_become_password:
+

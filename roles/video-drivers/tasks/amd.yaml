@@ -1,0 +1,7 @@
+- name: Install amd video driver(s)
+  become: yes
+  become_user: "{{ user.name }}"
+  kewlfft.aur.aur:
+    name:
+      - amdgpu-pro-libgl
+      - lib32-amdgpu-pro-libgl

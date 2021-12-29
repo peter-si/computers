@@ -1,0 +1,31 @@
+---
+- name: Install NetworkManager and dependencies
+  ansible.builtin.pacman:
+    name:
+      - networkmanager
+      - networkmanager-openvpn
+      - network-manager-applet
+    state: present
+
+- name: Push NetworkManager dnsmasq config
+  ansible.builtin.copy:
+    src: dns.conf
+    dest: /etc/NetworkManager/conf.d/20-dns.conf
+
+- name: Push connectivity check config
+  ansible.builtin.template:
+    src: connectivity.conf.j2
+    dest: /etc/NetworkManager/conf.d/20-connectivity.conf
+  when: network.conn_check is defined
+
+- name: Enable and start NetworkManager
+  ansible.builtin.systemd:
+    name: NetworkManager.service
+    enabled: yes
+  notify: start NetworkManager
+
+- name: Enable and start NetworkManager dispatcher
+  ansible.builtin.systemd:
+    name: NetworkManager-dispatcher.service
+    enabled: yes
+  notify: start NetworkManager dispatcher

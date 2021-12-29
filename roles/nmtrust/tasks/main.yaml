@@ -1,0 +1,33 @@
+---
+- name: Install nmtrust
+  become: yes
+  become_user: "{{ user.name }}"
+  kewlfft.aur.aur:
+    name: nmtrust-git
+  tags:
+    - aur
+
+- name: Create nmtrust config directory
+  ansible.builtin.file:
+    path: /etc/nmtrust
+    state: directory
+
+- name: Push trusted network list
+  ansible.builtin.template:
+    src: trusted_networks.j2
+    dest: /etc/nmtrust/trusted_networks
+
+- name: Push excluded network list
+  ansible.builtin.copy:
+    src: excluded_networks
+    dest: /etc/nmtrust/excluded_networks
+
+- name: Verify trusted unit list exists
+  ansible.builtin.file:
+    path: /etc/nmtrust/trusted_units
+    state: touch
+
+- name: "Check installed packages"
+  ansible.builtin.package_facts:
+
+- include_tasks: units.yaml

@@ -1,0 +1,44 @@
+---
+bootloader:
+  loader: systemd
+  path: /boot
+  time: 3
+  kernel_parameters:
+  silent: False
+
+root_partition: /dev/mapper/system
+
+network:
+  spoof_mac: True
+  conn_check:
+    interval: 0
+  trusted_uuid: []
+
+nmtrust:
+  mirrorlist: trusted
+  pkgfile: trusted
+  nextcloud: trusted
+  protonmail: trusted
+
+browser_choices:
+  - firefox -P default
+  - firefox -P work
+  - chromium
+
+browser_chooser: rofi
+clipboard: greenclip
+btrfs: true
+desktop_environment: xfce-i3
+display_temperature: clight
+
+udisks:
+  auto_mount: False
+  shared_mount: True
+
+gdm:
+  sound: False
+  font_scaling_factor: 1
+  logo_path: False
+  touchpad:
+    tap_to_click: True
+  accessibility_menu: True

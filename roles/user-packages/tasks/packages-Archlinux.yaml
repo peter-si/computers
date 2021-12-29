@@ -1,0 +1,15 @@
+---
+- name: Install AUR additional packages
+  become: yes
+  become_user: "{{ user.name }}"
+  kewlfft.aur.aur:
+    name: "{{ aur_additional_packages }}"
+    state: present
+  tags:
+    - aur
+  when: aur_additional_packages is defined and (aur_additional_packages|length>0)
+
+- import_role:
+    name: hostsctl
+  tags:
+    - hostsctl

@@ -1,0 +1,67 @@
+---
+- name: Setup redshift for display temperature
+  when: display_temperature == redshift
+  block:
+    - name: Install RedShift and dependencies
+      pacman:
+        name:
+          - librsvg
+          - python-gobject
+          - python-xdg
+          - redshift
+        state: present
+
+    - name: Push Geoclue user service
+      copy: src=geoclue-agent.service dest=/home/{{ user.name }}/.config/systemd/user/geoclue-agent.service
+
+    - name: Create user systemd default.target.wants dir
+      file:
+        path: "/home/{{ user.name }}/.config/systemd/user/default.target.wants"
+        state: directory
+        recurse: yes
+        owner: "{{ user.name }}"
+        group: "{{ user.group }}"
+        mode: 0755
+
+    - name: Enable Geoclue user service
+      file:
+        dest: "/home/{{ user.name }}/.config/systemd/user/default.target.wants/geoclue-agent.service"
+        src: "/home/{{ user.name }}/.config/systemd/user/geoclue-agent.service"
+        state: link
+
+    - name: Allow RedShift to access geoclue
+      blockinfile:
+        dest: /etc/geoclue/geoclue.conf
+        block: |
+          url=https://location.services.mozilla.com/v1/geolocate?key=geoclue
+          [redshift]
+          allowed=true
+          system=false
+          users=
+
+    - name: Copy the autostart scripts
+      copy: src="/usr/share/applications/redshift-gtk.desktop" dest=/home/{{ user.name }}/.config/autostart/ owner={{ user.name }} group={{ user.group }}
+
+- name: Setup clight for display temperature
+  when: display_temperature == clight
+  block:
+    - name: Install clight
+      become: yes
+      become_user: "{{ user.name }}"
+      kewlfft.aur.aur:
+        name:
+          - clightd
+          - clight
+          - clight-gui-git
+
+    - name: Allow clight to access geoclue
+      blockinfile:
+        dest: /etc/geoclue/geoclue.conf
+        block: |
+          url=https://location.services.mozilla.com/v1/geolocate?key=geoclue
+          [clightc]
+          allowed=true
+          system=false
+          users=
+    - name: Copy the autostart scripts
+      copy: src="/usr/share/applications/clight-gui.desktop" dest=/home/{{ user.name }}/.config/autostart/ owner={{ user.name }} group={{ user.group }}

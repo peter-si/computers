@@ -1,0 +1,17 @@
+---
+- name: Install linux-hardened
+  pacman:
+    name:
+      - linux-hardened
+      - linux-hardened-headers
+    state: present
+  notify:
+    - rebuild bootloader
+
+- name: Enable unprivileged containers for non-root users
+  copy:
+    src: 99-userns.conf
+    dest: /etc/sysctl.d/99-userns.conf
+  notify:
+    - reload sysctl
+  when: hardened.enable_namespaces

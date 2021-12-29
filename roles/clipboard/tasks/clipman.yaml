@@ -1,0 +1,6 @@
+---
+- name: install clipman from AUR
+  become: yes
+  become_user: "{{ user.name }}"
+  kewlfft.aur.aur:
+    name: clipman

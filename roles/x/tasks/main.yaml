@@ -1,0 +1,46 @@
+---
+- name: Install Xorg
+  pacman: name=xorg-server state=present
+
+- name: Install Xinit
+  pacman: name=xorg-xinit state=present
+
+- name: Install xmodmap
+  pacman: name=xorg-xmodmap state=present
+
+- name: Install xdpyinfo
+  pacman: name=xorg-xdpyinfo state=present
+
+- name: Install xev
+  pacman: name=xorg-xev state=present
+
+- name: Install xorg-sessreg
+  pacman: name=xorg-sessreg state=present
+
+- name: Install xorg-xwininfo
+  pacman: name=xorg-xwininfo state=present
+
+- name: Install xautomation
+  pacman: name=xautomation state=present
+
+- name: Add user to video group
+  user: name={{ user.name }} groups=video append=yes
+  tags:
+    - user
+
+- name: Enable middle-click scrolling
+  template: src=30-scroll.conf dest=/etc/X11/xorg.conf.d/30-scroll.conf
+  when: x.middle_click_scroll is defined
+  tags:
+    - libinput
+
+- name: Copy keyboard config
+  template: src=00-keyboard.conf dest=/etc/X11/xorg.conf.d/00-keyboard.conf
+  when: x.keyboard_model is defined
+  tags:
+    - libinput
+
+- include: unclutter.yaml
+- include: autorandr.yaml
+- include: srandrd.yaml
+- include: autocutsel.yaml

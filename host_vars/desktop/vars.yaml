@@ -1,0 +1,9 @@
+---
+hostname: aluhome
+
+video_drivers:
+  - nvidia
+
+browser_chooser: wofi
+clipboard: clipman
+desktop_environment: sway

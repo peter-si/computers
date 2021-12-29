@@ -1,0 +1,25 @@
+---
+- name: Generate en_US locale
+  ansible.builtin.locale_gen:
+    name: en_US.UTF-8
+    state: present
+
+- name: Generate sk_SK locale
+  ansible.builtin.locale_gen:
+    name: sk_SK.UTF-8
+    state: present
+
+- name: Generate locales
+  ansible.builtin.lineinfile:
+    path: /etc/vconsole.conf
+    line: "KEYMAP=us"
+    create: yes
+
+- name: Set timezone
+  ansible.builtin.file:
+    path: /etc/localtime
+    src: /usr/share/zoneinfo/{{ user.region }}/{{ user.city }}
+    state: link
+
+- name: Set system clock
+  ansible.builtin.shell: cmd="hwclock --systohc"

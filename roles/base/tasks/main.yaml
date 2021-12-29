@@ -1,0 +1,125 @@
+---
+- name: Install inetutils for hostname
+  ansible.builtin.package:
+    name: inetutils
+    state: present
+
+- name: Set the hostname
+  ansible.builtin.hostname:
+    name: "{{ hostname }}"
+    use: systemd
+
+- name: Add localhost to hosts
+  ansible.builtin.lineinfile:
+    path: /etc/hosts
+    line: '127.0.0.1 localhost localhost.localdomain'
+
+- name: Add ipv6 localhost to hosts
+  ansible.builtin.lineinfile:
+    path: /etc/hosts
+    line: '::1 localhost localhost.localdomain'
+
+- name: Add host to hosts
+  ansible.builtin.lineinfile:
+    path: /etc/hosts
+    line: '127.0.1.1 {{ hostname }} {{ hostname }}.localdomain'
+  when: hostname is defined
+
+- name: Add additional hosts
+  ansible.builtin.blockinfile:
+    path: /etc/hosts
+    block: "{{ additional_hosts }}"
+  when: additional_hosts is defined
+
+- name: set inotify limit higher
+  ansible.builtin.lineinfile:
+    path: /etc/sysctl.d/90-inotify.conf
+    line: "fs.inotify.max_user_watches=524288"
+    create: yes
+  notify:
+    - reload sysctl
+
+- name: Restricting access to kernel logs
+  ansible.builtin.lineinfile:
+    path: /etc/sysctl.d/51-dmesg-restrict.conf
+    line: "kernel.dmesg_restrict = 1"
+    create: yes
+  notify:
+    - reload sysctl
+
+- name: enable sysrq
+  ansible.builtin.lineinfile:
+    path: /etc/sysctl.d/99-sysrq.conf
+    line: "kernel.sysrq=1"
+    create: yes
+  notify:
+    - reload sysctl
+
+- name: Combine harden_linux_sysctl_settings and harden_linux_sysctl_settings_user (if defined)
+  set_fact:
+    harden_linux_sysctl_settings: "{{ harden_linux_sysctl_settings | combine(harden_linux_sysctl_settings_user|default({})) }}"
+  tags:
+    - sysctl
+
+- name: Create sysctl hardening config file
+  ansible.builtin.file:
+    path: "/etc/sysctl.d/90-hardening.conf"
+    state: touch
+
+- name: Sysctl settings
+  ansible.builtin.sysctl:
+    name: "{{ item }}"
+    value: "{{ harden_linux_sysctl_settings[item] }}"
+    sysctl_set: true
+    sysctl_file: "/etc/sysctl.d/90-hardening.conf"
+  loop: "{{ harden_linux_sysctl_settings|flatten }}"
+  tags:
+    - sysctl
+
+- name: Restrict user login with PAM
+  ansible.builtin.blockinfile:
+    block: |
+      +:{{ user.name }}:LOCAL
+      +:root:LOCAL
+      +:(wheel):LOCAL
+      -:ALL:ALL
+    path: /etc/security/access.conf
+
+- name: Limit amount of processes
+  ansible.builtin.blockinfile:
+    block: |
+      * soft nproc 2500
+      * hard nproc 3000
+    path: /etc/security/limits.conf
+
+- import_tasks: locale.yaml
+- import_tasks: resolvd.yaml
+- import_tasks: sudo.yaml
+- import_tasks: journal.yaml
+- name: Include distribution specific package manager files
+  include_tasks: "{{ item }}"
+  with_first_found:
+    - files:
+        - package-manager-{{ ansible_distribution }}.yaml
+      skip: true
+
+- name: Install base packages
+  ansible.builtin.package:
+    name: "{{ base_packages }}"
+    state: present
+
+- name: Enable base services
+  ansible.builtin.systemd: name={{ item }}.service enabled=yes
+  with_items: "{{ enabled_services }}"
+  notify: start base services
+
+- name: Create system environment group
+  group: name=env state=present
+
+- name: Create system environment dir
+  file: path=/usr/local/env state=directory group=env mode=2775
+
+- import_tasks: iptables.yaml
+- import_tasks: nano.yaml
+- import_tasks: fonts.yaml
+- import_tasks: keyring.yaml

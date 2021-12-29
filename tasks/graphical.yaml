@@ -1,0 +1,30 @@
+---
+- import_role:
+    name: video-drivers
+
+- import_role:
+    name: user-packages
+
+- import_role:
+    name: clipboard
+
+- import_role:
+    name: logitech
+  tags: [logitech]
+
+- import_role:
+    name: media
+
+- import_role:
+    name: udisks
+
+- import_role:
+    name: pipewire
+
+- import_role:
+    name: virtualbox
+  tags: [virtualbox]
+
+- import_role:
+    name: nmtrust
+  when: ansible_distribution == 'Archlinux'

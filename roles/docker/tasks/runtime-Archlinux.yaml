@@ -1,0 +1,11 @@
+---
+- name: Install nvidia container toolkit
+  become: yes
+  become_user: "{{ user.name }}"
+  kewlfft.aur.aur:
+    name:
+      - nvidia-container-runtime-bin
+      - libnvidia-container-tools-bin
+      - libnvidia-container-bin
+      - nvidia-container-toolkit
+      - nvidia-docker

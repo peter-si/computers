@@ -1,0 +1,53 @@
+---
+- name: Verify that default applications file exists
+  file: path=/etc/xdg/mimeapps.list state=touch
+
+- name: Install non-essential packages
+  ansible.builtin.package:
+    name: "{{ additional_packages }}"
+    state: present
+  when: additional_packages is defined and (additional_packages|length>0)
+
+- name: Include distribution specific packages
+  include_tasks: "{{ item }}"
+  with_first_found:
+    - files:
+        - packages-{{ ansible_distribution }}.yaml
+      skip: true
+
+- name: Create Protonmail bridge user unit
+  copy:
+    src: protonmail-bridge.service
+    dest: /home/{{ user.name }}/.config/systemd/user/protonmail-bridge.service
+    owner: "{{ user.name }}"
+    group: "{{ user.group }}"
+
+- name: Create Nextcloud user unit
+  copy:
+    src: nextcloud.service
+    dest: /home/{{ user.name }}/.config/systemd/user/nextcloud.service
+    owner: "{{ user.name }}"
+    group: "{{ user.group }}"
+
+- name: Configure interfaces for macchiato
+  copy: src=macchiato_default.sh dest=/etc/macchiato.d/{{ item }}.sh
+  with_items: "{{ ansible_interfaces }}"
+
+- name: Add user to wireshark group
+  user: name={{ user.name }} groups=wireshark append=yes
+
+- import_tasks: browser-chooser.yaml
+  when: browser_chooser is defined
+
+- name: Set epdfview as default PDF viewer
+  lineinfile:
+    dest: /etc/xdg/mimeapps.list
+    regexp: "^application/pdf"
+    state: present
+    line: "application/pdf=epdfview.desktop"
+
+
+- name: Enable additional services
+  ansible.builtin.systemd: name={{ item }}.service enabled=yes
+  with_items: "{{ additional_enabled_services }}"
+  notify: start additional services

@@ -1,0 +1,25 @@
+---
+- name: Push OpenSSH daemon configuration file
+  template: src=sshd_config.j2 dest=/etc/ssh/sshd_config
+
+- name: Create OpenSSH systemd unit file directory
+  file: path=/etc/systemd/system/sshd.socket.d state=directory
+
+- name: Push OpenSSH socket unit file
+  template: src=sshd-socket-override.conf.j2 dest=/etc/systemd/system/sshd.socket.d/override.conf
+  notify:
+    - reload systemd config
+    - restart sshd
+
+- name: Enable and start OpenSSH
+  systemd: name=sshd.service enabled=yes
+  when: ssh_enable_sshd is defined and ssh_enable_sshd == True
+  notify: start sshd
+
+- name: Disable and stop OpenSSH
+  systemd: name=sshd.service enabled=no
+  when: ssh_enable_sshd is defined and ssh_enable_sshd == False
+  notify: stop sshd
+
+- name: Copy fuse configuration file
+  copy: src=fuse.conf dest=/etc/fuse.conf

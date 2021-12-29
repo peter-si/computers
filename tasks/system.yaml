@@ -1,0 +1,19 @@
+---
+- debug:
+    msg: "Running system tasks"
+
+- import_role:
+    name: bootloader
+  when: bootloader is defined
+
+- import_role:
+    name: base
+
+- import_role:
+    name: stuvusit.systemd-timesyncd
+
+- import_role:
+    name: docker
+
+- import_role:
+    name: filesystems

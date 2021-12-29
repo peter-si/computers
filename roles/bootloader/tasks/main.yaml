@@ -1,0 +1,26 @@
+---
+- name: Copy crypttab.initramfs config
+  ansible.builtin.copy:
+    dest: /etc/crypttab.initramfs
+    src: crypttab.initramfs
+  notify: rebuild bootloader
+  when: root_partition == "/dev/mapper/system"
+
+- name: Comment out root partition from fstab since we are loading it rw
+  ansible.builtin.replace:
+    path: /etc/fstab
+    regexp: "(.*subvol=root.*)"
+    replace: '#\1'
+    backup: yes
+
+- name: Add swap to cryptsetup
+  ansible.builtin.lineinfile:
+    path: /etc/crypttab
+    line: "swap /dev/disk/by-partlabel/cryptswap  /dev/urandom  swap,offset=2048,cipher=aes-xts-plain64,size=256"
+  when: disable_swap is not defined or disable_swap != True
+
+- import_tasks: microcode.yaml
+- import_tasks: systemd.yaml
+  when: bootloader.loader == 'systemd'
+- import_tasks: hardened.yaml
+  when: hardened is defined and ansible_distribution == 'Archlinux'

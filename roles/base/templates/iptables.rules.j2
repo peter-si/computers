@@ -1,0 +1,55 @@
+# {{ ansible_managed }}
+*filter
+:INPUT DROP [0:0]
+:FORWARD DROP [0:0]
+:OUTPUT ACCEPT [0:0]
+:TCP - [0:0]
+:UDP - [0:0]
+:LOGDROP - [0:0]
+-A LOGDROP -m limit --limit 5/m --limit-burst 10 -j LOG
+-A LOGDROP -j DROP
+-A FORWARD -m conntrack --ctstate RELATED,ESTABLISHED -j ACCEPT
+-A OUTPUT -o lo -j ACCEPT
+-A OUTPUT -m conntrack --ctstate ESTABLISHED -j ACCEPT
+# Only allow this, when you want to block outgoing traffic
+#-A OUTPUT -p udp -j LOGDROP
+#-A OUTPUT -p tcp -j LOGDROP
+#-A OUTPUT -j LOGDROP
+-A INPUT -m conntrack --ctstate RELATED,ESTABLISHED -j ACCEPT
+-A INPUT -i lo -j ACCEPT
+-A INPUT -m conntrack --ctstate INVALID -j LOGDROP
+-A INPUT -p icmp -m icmp --icmp-type 8 -m conntrack --ctstate NEW -j ACCEPT
+-A INPUT -p udp -m conntrack --ctstate NEW -j UDP
+-A INPUT -p tcp -m tcp --tcp-flags FIN,SYN,RST,ACK SYN -m conntrack --ctstate NEW -j TCP
+-A INPUT -p udp -j LOGDROP
+-A INPUT -p tcp -j LOGDROP
+-A INPUT -j LOGDROP
+{% if ssh_enable_sshd %}
+-A TCP -p tcp -m tcp --dport {{ ssh_port }} -j ACCEPT
+{% endif %}
+{% if kubernetes.roles is defined and 'control-plane' in kubernetes.roles %}
+-A TCP -p tcp -m tcp --dport 80 -m comment --comment "Http" -j ACCEPT
+-A TCP -p tcp -m tcp --dport 443 -m comment --comment "Http" -j ACCEPT
+-A TCP -p tcp -m tcp --dport 6443 -m comment --comment "Kubernetes API server" -j ACCEPT
+-A TCP -s 192.168.2.100 -p tcp -m multiport --dports 2379,2380 -m comment --comment "etcd server client API" -j ACCEPT
+-A TCP -s 192.168.2.100 -p tcp -m tcp --dport 10250 -m comment --comment "kubelet API" -j ACCEPT
+-A TCP -p tcp -m tcp --dport 30000:32767 -m comment --comment "NodePort Services" -j ACCEPT
+-A UDP -p udp -m udp --dport 8472 -m comment --comment "Canal/Flannel VXLAN overlay networking" -j ACCEPT
+{% endif %}
+{% if kubernetes.roles is defined and 'node' in kubernetes.roles %}
+-A TCP -p tcp -m tcp --dport 80 -m comment --comment "Http" -j ACCEPT
+-A TCP -p tcp -m tcp --dport 443 -m comment --comment "Http" -j ACCEPT
+-A TCP -s 192.168.2.100 -p tcp -m tcp --dport 10250 -m comment --comment "kubelet API" -j ACCEPT
+-A TCP -p tcp -m tcp --dport 30000:32767 -m comment --comment "NodePort Services" -j ACCEPT
+-A UDP -p udp -m udp --dport 8472 -m comment --comment "Canal/Flannel VXLAN overlay networking" -j ACCEPT
+{% endif %}
+{% if firewall.xdebug is defined and firewall.xdebug == True %}
+-A TCP -s 172.0.0.0/8 -p tcp -m tcp --dport 9003 -m comment --comment "docker xdebug 3" -j ACCEPT
+-A TCP -d 172.0.0.0/8 -p tcp -m tcp --dport 9003 -m comment --comment "docker xdebug 3" -j ACCEPT
+-A TCP -d 172.0.0.0/8 -p tcp -m tcp --dport 9000 -m comment --comment "docker xdebug 2" -j ACCEPT
+-A TCP -s 172.0.0.0/8 -p tcp -m tcp --dport 9000 -m comment --comment "docker xdebug 2" -j ACCEPT
+{% endif %}
+{% if firewall.avahi is defined and firewall.avahi == True %}
+-A UDP -p udp -m udp --dport 5353 -m comment --comment Avahi -j ACCEPT
+{% endif %}
+COMMIT

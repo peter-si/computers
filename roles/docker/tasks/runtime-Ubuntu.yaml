@@ -1,0 +1,19 @@
+---
+- name: Add nvidia repository into sources list
+  ansible.builtin.apt_repository:
+    repo: "{{ item }}"
+    state: present
+    filename: nvidia-docker
+  with_items:
+    - deb https://nvidia.github.io/libnvidia-container/stable/ubuntu20.04/$(ARCH) /
+    - deb https://nvidia.github.io/nvidia-container-runtime/stable/ubuntu20.04/$(ARCH) /
+    - deb https://nvidia.github.io/nvidia-docker/ubuntu20.04/$(ARCH) /
+
+- name: Install nvidia runtime
+  ansible.builtin.package:
+    name:
+      - nvidia-container-runtime
+      - nvidia-docker2
+      - nvidia-headless-470-server
+      - nvidia-utils-470-server
+    state: present

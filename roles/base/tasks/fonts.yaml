@@ -1,0 +1,23 @@
+---
+- name: Enable LCD filter
+  ansible.builtin.file:
+    src: /usr/share/fontconfig/conf.avail/11-lcdfilter-default.conf
+    dest: /etc/fonts/conf.d/11-lcdfilter-default.conf
+    state: link
+
+- name: Enable sub-pixel rendering
+  ansible.builtin.file:
+    src: /usr/share/fontconfig/conf.avail/10-sub-pixel-rgb.conf
+    dest: /etc/fonts/conf.d/10-sub-pixel-rgb.conf
+    state: link
+
+- name: Enable hinting
+  ansible.builtin.file:
+    src: /usr/share/fontconfig/conf.avail/10-hinting-slight.conf
+    dest: /etc/fonts/conf.d/10-hinting-slight.conf
+    state: link
+
+- name: Push font substitutions
+  ansible.builtin.copy:
+    src: local.conf
+    dest: /etc/fonts/local.conf

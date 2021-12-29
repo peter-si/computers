@@ -1,0 +1,26 @@
+---
+- include_tasks: unit.yaml
+  when: "'reflector' in ansible_facts.packages"
+  vars:
+    unit: reflector.timer
+    run_on: "{{ nmtrust.mirrorlist }}"
+
+- include_tasks: unit.yaml
+  when: "'pkgfile' in ansible_facts.packages"
+  vars:
+    unit: pkgfile-update.timer
+    run_on: "{{ nmtrust.pkgfile }}"
+
+- include_tasks: unit.yaml
+  when: "'protonmail-bridge-bin' in ansible_facts.packages"
+  vars:
+    unit: protonmail-bridge.service
+    run_on: "{{ nmtrust.protonmail }}"
+    user_unit: true
+
+- include_tasks: unit.yaml
+  when: "'nextcloud-client' in ansible_facts.packages"
+  vars:
+    unit: nextcloud.service
+    run_on: "{{ nmtrust.nextcloud }}"
+    user_unit: true

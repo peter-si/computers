@@ -1,0 +1,92 @@
+---
+- name: Create user group
+  ansible.builtin.group:
+    name: "{{ user.group }}"
+    state: present
+
+- name: Create user and assign to group
+  ansible.builtin.user:
+    name: "{{ user.name }}"
+    group: "{{ user.group }}"
+    password: "{{ user_password|password_hash('sha512') }}"
+    shell: "{{ user.shell }}"
+    update_password: on_create
+    uid: "{{ user.uid }}"
+
+- name: Change root password and shell
+  ansible.builtin.user:
+    name: root
+    password: "{{ user_password|password_hash('sha512') }}"
+    shell: "{{ user.shell }}"
+    update_password: on_create
+
+- name: Create user log dir
+  ansible.builtin.file:
+    path: /home/{{ user.name }}/{{ user.log.dir }}
+    state: directory
+    owner: "{{ user.name }}"
+    group: "{{ user.group }}"
+  when: user.log.dir is defined
+
+- name: Install logrotate
+  ansible.builtin.package:
+    name: logrotate
+    state: present
+
+- name: Push logrotate config for user logs
+  ansible.builtin.template:
+    src: logrotate.j2
+    dest: /etc/logrotate.d/user
+  when: user.log.dir is defined
+
+- name: Create tmp directory for user
+  ansible.builtin.file:
+    path: /home/{{ user.name }}/tmp
+    state: directory
+    mode: 0755
+    owner: "{{ user.name }}"
+    group: "{{ user.group }}"
+
+- name: Create user systemd config dir
+  ansible.builtin.file:
+    path: "/home/{{ user.name }}/.config/systemd/user"
+    state: directory
+    recurse: yes
+    owner: "{{ user.name }}"
+    group: "{{ user.group }}"
+    mode: 0755
+
+- name: Create user socket directory
+  ansible.builtin.file:
+    path: /run/user/{{ user.uid }}
+    state: directory
+    owner: "{{ user.name }}"
+    group: "{{ user.group }}"
+    mode: 0700
+
+- name: Start user systemd instance
+  ansible.builtin.systemd:
+    name: "user@{{ user.uid }}"
+    enabled: yes
+  notify: start user systemd instance
+
+- import_tasks: xdg.yaml
+  tags:
+    - xdg
+- import_tasks: gnupg.yaml
+
+- name: Make directory for user SSH key
+  file: path=/home/{{ user.name }}/.ssh state=directory owner={{ user.name }} group={{ user.group }} mode=0700
+
+- name: Copy user SSH keys
+  copy: src={{ ssh_user_dir }}/ dest=/home/{{ user.name }}/.ssh mode=600 owner={{ user.name }} group={{ user.group }}
+  when: ssh_user_dir is defined
+
+- name: Add user public key to authorized keys
+  authorized_key:
+    user: '{{ user.name }}'
+    state: present
+    key: "{{ lookup('file', '/home/{{ user.name }}/.ssh/id_rsa.pub') }}"
+
+- name: Add user to system environment group
+  user: name={{ user.name }} groups=env append=yes

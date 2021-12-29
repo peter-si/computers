@@ -1,0 +1,42 @@
+---
+- name: Install docker
+  ansible.builtin.package:
+    name:
+      - docker
+      - docker-compose
+    state: present
+
+- name: Create docker config dir
+  ansible.builtin.file:
+    path: /etc/docker
+    state: directory
+
+- name: Remove docker daemon config
+  ansible.builtin.file:
+    path: /etc/docker/daemon.json
+    state: absent
+
+- name: Install nvidia runtime
+  include_tasks: "{{ item }}"
+  with_first_found:
+    - files:
+        - runtime-{{ ansible_distribution }}.yaml
+      skip: true
+  when: "nvidia_runtime is defined and nvidia_runtime == True"
+
+- name: Add user to docker group
+  ansible.builtin.user: name={{ user.name }} groups=docker append=yes
+  tags:
+    - user
+
+- name: Copy docker daemon settings
+  ansible.builtin.template:
+    dest: /etc/docker/daemon.json
+    src: daemon.json.j2
+    force: yes
+
+- name: Enable docker.service
+  ansible.builtin.systemd:
+    name: docker.service
+    enabled: yes
+  notify: start docker

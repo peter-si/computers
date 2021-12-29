@@ -1,0 +1,10 @@
+---
+- name: Push DNS over TLS config
+  ansible.builtin.copy:
+    src: dns_over_tls.conf
+    dest: /etc/systemd/resolved.conf.d/
+
+- name: Push DNSSEC config
+  ansible.builtin.copy:
+    src: dnssec.conf
+    dest: /etc/systemd/resolved.conf.d/

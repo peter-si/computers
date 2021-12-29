@@ -1,0 +1,18 @@
+---
+- include_tasks: amd.yaml
+  when: '"amd" in video_drivers'
+- include_tasks: amdgpu.yaml
+  when: '"amdgpu" in video_drivers'
+- include_tasks: nouveau.yaml
+  when: '"nouveau" in video_drivers'
+- include_tasks: nvidia.yaml
+  when: '"nvidia" in video_drivers'
+
+- name: Install vulkan and hardware acceleration utils
+  pacman:
+    name:
+      - vulkan-tools
+      - libva-utils
+      - libva-vdpau-driver
+      - vdpauinfo
+    state: present

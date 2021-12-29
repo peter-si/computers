@@ -1,0 +1,7 @@
+- name: Install nouveau video driver(s)
+  pacman:
+    name:
+      - mesa
+      - lib32-mesa
+      - xf86-video-nouveau
+    state: present

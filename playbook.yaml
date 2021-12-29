@@ -1,0 +1,62 @@
+---
+- hosts: all
+  become: yes
+  tasks:
+    - name: Include common packages.
+      include_vars: "main.yaml"
+
+    - name: Include OS-specific variables.
+      include_vars: "{{ ansible_os_family }}.yaml"
+
+    - name: Combine base_packages, base_packages_distro and base_packages_user
+      set_fact:
+        base_packages: "{{ base_packages + base_packages_distro|default([]) + base_packages_user|default([]) }}"
+
+    - name: Combine additional_packages, additional_packages_distro and additional_packages_user
+      set_fact:
+        additional_packages: "{{ additional_packages + additional_packages_distro|default([]) + additional_packages_user|default([]) }}"
+
+    - name: Combine enabled_services, enabled_services_distro and enabled_services_user
+      set_fact:
+        enabled_services: "{{ enabled_services|default([]) + enabled_services_distro|default([]) + enabled_services_user|default([]) }}"
+
+    - name: Combine additional_enabled_services, additional_enabled_services_distro and additional_enabled_services_user
+      set_fact:
+        additional_enabled_services: "{{ additional_enabled_services|default([]) + additional_enabled_services_distro|default([]) + additional_enabled_services_user|default([]) }}"
+
+    - import_tasks: tasks/system.yaml
+      tags: [system]
+    - import_tasks: tasks/user.yaml
+      tags: [user]
+
+- hosts: workstations
+  become: yes
+  tasks:
+    - import_tasks: tasks/graphical.yaml
+      tags: [graphical]
+    - import_tasks: tasks/desktop-environment.yaml
+      tags: [desktop-environment]
+
+
+- hosts: work-laptop
+  become: yes
+  tasks:
+    - import_role:
+        name: tlp
+    - import_role:
+        name: asus
+    - import_role:
+        name: laptop
+
+
+- hosts: servers
+  become: yes
+  tasks:
+    - import_role:
+        name: udev
+
+- hosts: home-server
+  become: yes
+  tasks:
+    - import_role:
+        name: kubernetes

@@ -1,0 +1,26 @@
+---
+- name: Set microcode package Ubuntu/Intel
+  set_fact:
+    microcode: intel-microcode
+  when: "'GenuineIntel' in ansible_processor and (ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu')"
+
+- name: Set microcode package Ubuntu/Amd
+  set_fact:
+    microcode: amd64-microcode
+  when: "'AuthenticAMD' in ansible_processor and (ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu')"
+
+- name: Set microcode package Archlinux/Intel
+  set_fact:
+    microcode: intel-ucode
+  when: "'GenuineIntel' in ansible_processor and ansible_distribution == 'Archlinux'"
+
+- name: Set microcode package Archlinux/Amd
+  set_fact:
+    microcode: amd-ucode
+  when: "'AuthenticAMD' in ansible_processor and ansible_distribution == 'Archlinux'"
+
+- name: Install intel microcode
+  ansible.builtin.package: name={{ microcode }} state=present
+  tags:
+    - microcode
+

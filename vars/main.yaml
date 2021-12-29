@@ -1,0 +1,70 @@
+enabled_services:
+    - iptables
+    - ip6tables
+    - systemd-resolved
+    - systemd-timesyncd
+
+additional_enabled_services:
+    - avahi-daemon
+    - cups
+    - cups-browsed
+
+base_packages:
+    - bash
+    - bash-completion
+    - zsh
+    - zsh-completions
+    - man-db
+    - man-pages
+    - nano
+    - fontconfig
+    - zip
+    - unzip
+    - p7zip
+    - unrar
+    - atool
+    - wget
+    - neofetch
+    - gnome-keyring
+    - gnupg
+    - ngrep
+    - mtr
+    - net-tools
+    - bind-tools
+    - whois
+    - netcat
+    - nmap
+    - tcpdump
+    - socat
+    - nethogs
+    - bmon
+    - speedtest-cli
+    - openvpn
+    - python-pipenv
+    - pyenv
+    - python-docs
+    - python2-docs
+    - keychain
+    - sysstat
+    - glances
+    - htop
+    - lsof
+    - strace
+    - smartmontools
+    - progress
+    - python-virtualenvwrapper
+    - magic-wormhole
+
+additional_packages:
+    - wireshark-qt
+    - wireguard-tools
+    - jre-openjdk
+    - gsimplecal
+    - papirus-icon-theme
+    - gnome-calculator
+    - jre-openjdk
+    - gucharmap
+    - discord
+    - filezilla
+
+
