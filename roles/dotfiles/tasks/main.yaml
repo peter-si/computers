@@ -2,22 +2,7 @@
 - name: Clone dotfiles to user home
   become_user: "{{ user.name }}"
   become: yes
-  git:
-    repo: "{{ dotfiles.url }}"
-    dest: /home/{{ user.name }}/{{ dotfiles.name }}
-    recursive: yes
-    bare: yes
-    key_file: /home/{{ user.name }}/.ssh/id_rsa
-
-- name: Checkout dotfiles
-  become_user: "{{ user.name }}"
-  become: yes
-  command: git --git-dir=/home/{{ user.name }}/.dotfiles.git --work-tree=/home/{{ user.name }} checkout --force
-
-- name: Remove README from home
-  file:
-    path: /home/{{ user.name }}/README.md
-    state: absent
+  command: "chezmoi init --apply --verbose {{ dotfiles.url }}"
 
 - name: Creates directory for runable scripts
   become_user: "{{ user.name }}"
@@ -28,5 +13,15 @@
     mode: 0775
     recurse: yes
 
-- include_tasks: zsh.yaml
-#- include: bitwarden.yaml
+- name: Copy zshrc to root
+  synchronize:
+    dest: "/root/"
+    src: "/home/{{ user.name }}/.zshrc"
+    archive: no
+  notify: zplug install as root
+
+- name: Copy powerlevel to root
+  synchronize:
+    dest: "/root/"
+    src: "/home/{{ user.name }}/.p10k.zsh"
+    archive: no

@@ -4,6 +4,5 @@
   become_user: "{{ user.name }}"
   shell: cmd="zplug install"
 
-
 - name: zplug install as root
   shell: cmd="zplug install"
