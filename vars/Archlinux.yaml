@@ -126,6 +126,7 @@ additional_packages_distro:
   - lib32-fontconfig
   - ttf-liberation
   - transmission-gtk
+  - chezmoi
 
 aur_base_packages:
   - yay
