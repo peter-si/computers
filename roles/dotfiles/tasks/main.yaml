@@ -2,7 +2,7 @@
 - name: Clone dotfiles to user home
   become_user: "{{ user.name }}"
   become: yes
-  command: "chezmoi init --apply --verbose -W /home/{{ user.name }} {{ user.dotfiles }}"
+  command: "chezmoi init --apply --verbose {{ user.dotfiles }}"
 
 - name: Creates directory for runable scripts
   become_user: "{{ user.name }}"
