@@ -9,10 +9,7 @@ user:
     rotate: 8
   region: Europe
   city: Bratislava
-
-dotfiles:
-  url: git@github.com:peter-si/arch-dotfiles.git
-  name: .dotfiles.git
+  dotfiles: git@github.com:peter-si/dotfiles.git
 
 journal:
   max_size: 500M
