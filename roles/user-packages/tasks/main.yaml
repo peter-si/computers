@@ -46,7 +46,6 @@
     state: present
     line: "application/pdf=epdfview.desktop"
 
-
 - name: Enable additional services
   ansible.builtin.systemd: name={{ item }}.service enabled=yes
   with_items: "{{ additional_enabled_services }}"
