@@ -61,6 +61,7 @@ base_packages_distro:
   - ttf-opensans
   - ttf-ubuntu-font-family
   - ttf-font-awesome
+  - chezmoi
 
 additional_packages_distro:
   - avahi
@@ -126,7 +127,6 @@ additional_packages_distro:
   - lib32-fontconfig
   - ttf-liberation
   - transmission-gtk
-  - chezmoi
 
 aur_base_packages:
   - yay
