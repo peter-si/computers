@@ -31,22 +31,22 @@
 - name: Install powertop
   pacman: name=powertop state=present
 
-- name: Install powerstat
-  become: yes
-  become_user: "{{ user.name }}"
-  kewlfft.aur.aur: name=powerstat-git
-  tags:
-    - aur
+#- name: Install powerstat
+#  become: yes
+#  become_user: "{{ user.name }}"
+#  kewlfft.aur.aur: name=powerstat-git
+#  tags:
+#    - aur
 
 - name: Install cmake for battery-stats
   pacman: name=cmake state=present
 
-- name: Install battery-stats
-  become: yes
-  become_user: "{{ user.name }}"
-  kewlfft.aur.aur: name=battery-stats-git
-  tags:
-    - aur
+#- name: Install battery-stats
+#  become: yes
+#  become_user: "{{ user.name }}"
+#  kewlfft.aur.aur: name=battery-stats-git
+#  tags:
+#    - aur
 
 #- name: Install battop
 #  become: yesblueproximity-py3-git
@@ -57,24 +57,27 @@
 #  tags:
 #    - aur
 
-- name: Install gestures prerequisites
-  pacman:
-    name:
-      - wmctrl
-      - xdotool
-    state: present
-
 - name: Install gestures
-  become: yes
-  become_user: "{{ user.name }}"
-  kewlfft.aur.aur: name=libinput-gestures
-  tags:
-    - aur
+  when: desktop_environment == 'xfce-i3'
+  block:
+    - name: Install gestures prerequisites
+      pacman:
+        name:
+          - wmctrl
+          - xdotool
+        state: present
 
-- name: Add the user to the input groups
-  user:
-    name: "{{ user.name }}"
-    groups: input
-    append: yes
-  tags:
-    - user
+    - name: Install gestures
+      become: yes
+      become_user: "{{ user.name }}"
+      kewlfft.aur.aur: name=libinput-gestures
+      tags:
+        - aur
+
+    - name: Add the user to the input groups
+      user:
+        name: "{{ user.name }}"
+        groups: input
+        append: yes
+      tags:
+        - user
