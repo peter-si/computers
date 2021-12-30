@@ -2,7 +2,7 @@
 - name: Clone dotfiles to user home
   become_user: "{{ user.name }}"
   become: yes
-  command: "chezmoi init --cache /home/{{ user.name }}/.cache/chezmoi --source path /home/{{ user.name }}/.local/share/chezmoi -D /home/{{ user.name }} --no-tty --force --apply --verbose {{ user.dotfiles }}"
+  command: "chezmoi init --cache /home/{{ user.name }}/.cache/chezmoi --source /home/{{ user.name }}/.local/share/chezmoi -D /home/{{ user.name }} --no-tty --force --apply --verbose {{ user.dotfiles }}"
 
 - name: Creates directory for runable scripts
   become_user: "{{ user.name }}"
