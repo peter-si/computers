@@ -1,5 +1,5 @@
 ---
-- name: Install XFCE and i3 packages
+- name: Install Sway packages
   pacman:
     name:
       - sway
@@ -7,20 +7,35 @@
       - xorg-xwayland
       - xdg-desktop-portal-wlr
       - wf-recorder
-      - mako
+      - wofi
+      - waybar
     state: present
 
-- name: Install XFCE and i3 aur packages
+- name: Install Sway aur packages
   become: yes
   become_user: "{{ user.name }}"
   kewlfft.aur.aur:
     name:
       - autotiling-git
+      - sworkstyle
+      - flavours
+      - swaync-git
       - swaylock-effects
       - swayr
       - wpgtk
       - slurp
       - grimshot
-      - nwg-panel
+      - swaync-git
   tags:
     - aur
+
+- name: Change sway.desktop for nvidia
+  lineinfile:
+    path: /usr/share/wayland-sessions/sway.desktop
+    line: 'Exec=sway --my-next-gpu-wont-be-nvidia'
+    regexp: '^Exec=sway'
+    when: '"nvidia" in video_drivers'
+
+- name: Update flavours templates
+  command:
+    cmd: flavours update all

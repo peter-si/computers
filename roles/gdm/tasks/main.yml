@@ -15,5 +15,5 @@
   template: src=gdm.d/00-alu.j2 dest=/etc/dconf/db/gdm.d/00-alu
   notify: update DConf database
 
-- name: Autologin GDM
-  template: src=custom.conf dest=/etc/gdm/custom.conf
+#- name: Autologin GDM
+#  template: src=custom.conf dest=/etc/gdm/custom.conf

@@ -42,7 +42,6 @@ base_packages_distro:
   - nvme-cli
   - acpi
   - acpi_call
-  - sxhkd
   - adobe-source-code-pro-fonts
   - cantarell-fonts
   - gsfonts
