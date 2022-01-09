@@ -93,13 +93,13 @@
 
 - name: Override user.service
   copy:
-    path: user_service_override.conf
+    src: user_service_override.conf
     dest: /etc/systemd/system/user@service.service.d/override.conf
     mode: 0644
 
 - name: Override user.slice
   copy:
-    path: user_slice_override.conf
+    src: user_slice_override.conf
     dest: /etc/systemd/system/user@service.service.d/override.conf
     mode: 0644
 
@@ -120,10 +120,6 @@
 
 - name: Copy oomd.conf
   copy:
-    path: oomd.conf
+    src: oomd.conf
     dest: /etc/systemd/oomd.conf
     mode: 0644
-
-- name: Enable oomd.service
-  ansible.builtin.systemd: name=oomd.service enabled=yes
-  notify: start oomd service

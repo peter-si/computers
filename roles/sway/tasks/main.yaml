@@ -40,7 +40,7 @@
     path: /usr/share/wayland-sessions/sway.desktop
     line: 'Exec=sway --my-next-gpu-wont-be-nvidia'
     regexp: '^Exec=sway'
-    when: '"nvidia" in video_drivers'
+  when: '"nvidia" in video_drivers'
 
 - name: Update flavours templates
   command:
@@ -48,11 +48,11 @@
 
 - name: Copy Phpstorm shortcut
   ansible.builtin.copy:
-    dest: /usr/share/applications/jetbrains-phpstorm.desktop
-    src: /home/{{ user.name }}/.local/share/applications/jetbrains-phpstorm.desktop
+    src: /usr/share/applications/jetbrains-phpstorm.desktop
+    dest: /home/{{ user.name }}/.local/share/applications/jetbrains-phpstorm.desktop
 
 - name: Add non-reparenting to Phpstorm shortcut
-  lineinfile:
+  ansible.builtin.lineinfile:
     path: "/home/{{ user.name }}/.local/share/applications/jetbrains-phpstorm.desktop"
     backrefs: yes
     regexp: "^Exec=(.*)$"
