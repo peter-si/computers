@@ -91,6 +91,12 @@
 - name: Add user to system environment group
   user: name={{ user.name }} groups=env append=yes
 
+- name: Make user override dirs
+  file: path={{ item ]} state=directory mode=0755
+  with_items:
+    - /etc/systemd/system/user@service.service.d/
+    - /etc/systemd/system/user.slice.d/
+
 - name: Override user.service
   copy:
     src: user_service_override.conf
@@ -100,7 +106,7 @@
 - name: Override user.slice
   copy:
     src: user_slice_override.conf
-    dest: /etc/systemd/system/user@service.service.d/override.conf
+    dest: /etc/systemd/system/user.slice.d/override.conf
     mode: 0644
 
 - name: Configure systemd system.conf
