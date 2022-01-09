@@ -35,10 +35,13 @@ udisks:
   auto_mount: False
   shared_mount: True
 
-gdm:
-  sound: False
-  font_scaling_factor: 1
-  logo_path: False
-  touchpad:
-    tap_to_click: True
-  accessibility_menu: True
+bluetooth:
+  disable: False
+
+# gdm:
+#   sound: False
+#   font_scaling_factor: 1
+#   logo_path: False
+#   touchpad:
+#     tap_to_click: True
+#   accessibility_menu: True

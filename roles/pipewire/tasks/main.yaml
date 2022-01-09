@@ -1,15 +1,30 @@
 ---
 - name: Install alsa-utils
-  pacman:
+  ansible.builtin.pacman:
     name: alsa-utils
     state: present
 
 - name: Install PulseAudio
-  pacman:
+  ansible.builtin.pacman:
     name:
       - pipewire
       - pipewire-alsa
       - pipewire-pulse
       - wireplumber
       - pavucontrol
+      - gst-plugin-pipewire
+      - gstreamer-vaapi
     state: present
+
+- name: Make sure media-session dir exists
+  ansible.builtin.file: path=/etc/pipewire/media-session.d/ state=directory mode="0755"
+
+- name: Set pipewire to work with pulse audio
+  ansible.builtin.file:
+    path: /etc/pipewire/media-session.d/with-pulseaudio
+    state: touch
+
+- name: Copy wireplumber config
+  ansible.builtin.copy:
+    src: /usr/share/wireplumber
+    dest: /etc/wireplumber

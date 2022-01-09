@@ -22,6 +22,10 @@
     name: pipewire
 
 - import_role:
+    name: bluetooth
+  when: bluetooth is defined
+
+- import_role:
     name: virtualbox
   tags: [virtualbox]
 

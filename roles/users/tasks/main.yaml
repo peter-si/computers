@@ -90,3 +90,40 @@
 
 - name: Add user to system environment group
   user: name={{ user.name }} groups=env append=yes
+
+- name: Override user.service
+  copy:
+    path: user_service_override.conf
+    dest: /etc/systemd/system/user@service.service.d/override.conf
+    mode: 0644
+
+- name: Override user.slice
+  copy:
+    path: user_slice_override.conf
+    dest: /etc/systemd/system/user@service.service.d/override.conf
+    mode: 0644
+
+- name: Configure systemd system.conf
+  lineinfile:
+    dest: /etc/systemd/system.conf
+    regexp: "{{ item.regexp }}"
+    line: "{{ item.line }}"
+  with_items:
+    - { regexp: 'DefaultCPUAccounting=', line: 'DefaultCPUAccounting=yes' }
+    - { regexp: 'DefaultIOAccounting=', line: 'DefaultIOAccounting=yes' }
+    - { regexp: 'DefaultMemoryAccounting=', line: 'DefaultMemoryAccounting=yes' }
+    - { regexp: 'DefaultTasksAccounting=', line: 'DefaultTasksAccounting=yes' }
+
+- name: Configure oomd.conf
+  blockinfile:
+    path: /etc/systemd/oomd.conf
+
+- name: Copy oomd.conf
+  copy:
+    path: oomd.conf
+    dest: /etc/systemd/oomd.conf
+    mode: 0644
+
+- name: Enable oomd.service
+  ansible.builtin.systemd: name=oomd.service enabled=yes
+  notify: start oomd service

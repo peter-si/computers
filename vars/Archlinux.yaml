@@ -78,8 +78,8 @@ additional_packages_distro:
   - thunar-archive-plugin
   - archiso
   - arch-audit
-  - thunderbird
-  - thunderbird-i18n-sk
+#   - thunderbird
+#   - thunderbird-i18n-sk
   - flac
   - lame
   - gst-libav
@@ -99,7 +99,7 @@ additional_packages_distro:
   - youtube-dl
   - zbar
   - svgcleaner
-  - gnome-screenshot
+  - file-roller
   - digikam
   - poppler-glib
   - gimp
@@ -126,6 +126,7 @@ additional_packages_distro:
   - lib32-fontconfig
   - ttf-liberation
   - transmission-gtk
+  - ranger
 
 aur_base_packages:
   - yay
@@ -152,7 +153,7 @@ aur_additional_packages:
   - ttf-font-awesome-4
   - ttf-weather-icons
   - phpstorm
-  - phpstorm-url-handler
+#   - phpstorm-url-handler
   - phpstorm-jre
   - macchiato-git
   - protonmail-bridge-bin

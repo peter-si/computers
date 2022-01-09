@@ -20,6 +20,7 @@
       - xcb-util-cursor
       - light-locker
       - sxhkd
+      - gnome-screenshot
     state: present
 
 - name: Install XFCE and i3 aur packages

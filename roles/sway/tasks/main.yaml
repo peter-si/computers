@@ -9,6 +9,10 @@
       - wf-recorder
       - wofi
       - waybar
+      - nautilus
+      - nautilus-terminal
+      - seahorse-nautilus
+      - swappy
     state: present
 
 - name: Install Sway aur packages
@@ -22,10 +26,12 @@
       - swaync-git
       - swaylock-effects
       - swayr
-      - wpgtk
       - slurp
-      - grimshot
       - swaync-git
+      - wev
+      - wdisplays
+      - way-displays
+      - kooha
   tags:
     - aur
 
@@ -39,3 +45,15 @@
 - name: Update flavours templates
   command:
     cmd: flavours update all
+
+- name: Copy Phpstorm shortcut
+  ansible.builtin.copy:
+    dest: /usr/share/applications/jetbrains-phpstorm.desktop
+    src: /home/{{ user.name }}/.local/share/applications/jetbrains-phpstorm.desktop
+
+- name: Add non-reparenting to Phpstorm shortcut
+  lineinfile:
+    path: "/home/{{ user.name }}/.local/share/applications/jetbrains-phpstorm.desktop"
+    backrefs: yes
+    regexp: "^Exec=(.*)$"
+    line: 'Exec=env _JAVA_AWT_WM_NONREPARENTING=1 \1'

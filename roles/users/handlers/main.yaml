@@ -25,3 +25,9 @@
     scope: user
     state: started
   when: ansible_virtualization_role == "host" or ansible_virtualization_role == "NA"
+
+- name: start oomd service
+  systemd:
+    name: oomd.service
+    state: started
+  when: ansible_virtualization_role == "host" or ansible_virtualization_role == "NA"
