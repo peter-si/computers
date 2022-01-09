@@ -127,6 +127,7 @@ additional_packages_distro:
   - ttf-liberation
   - transmission-gtk
   - ranger
+  - bitwarden-cli
 
 aur_base_packages:
   - yay
