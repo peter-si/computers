@@ -92,7 +92,10 @@
   user: name={{ user.name }} groups=env append=yes
 
 - name: Make user override dirs
-  file: path="{{ item ]}" state=directory mode=0755
+  file:
+    path: "{{ item ]}"
+    state: directory
+    mode: 0755
   with_items:
     - "/etc/systemd/system/user@service.service.d/"
     - "/etc/systemd/system/user.slice.d/"
