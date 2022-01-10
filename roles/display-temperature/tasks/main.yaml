@@ -1,6 +1,6 @@
 ---
 - name: Setup redshift for display temperature
-  when: "display_temperature == 'redshift'"
+  when: display_temperature == 'redshift'
   block:
     - name: Install RedShift and dependencies
       pacman:
@@ -43,7 +43,7 @@
       copy: src="/usr/share/applications/redshift-gtk.desktop" dest=/home/{{ user.name }}/.config/autostart/ owner={{ user.name }} group={{ user.group }}
 
 - name: Setup clight for display temperature
-  when: 'display_temperature == "clight"'
+  when: display_temperature == 'clight'
   block:
     - name: Install clight
       become: yes
