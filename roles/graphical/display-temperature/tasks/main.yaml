@@ -1,4 +1,7 @@
 ---
+- name: Install geoclue
+  ansible.builtin.package: name=geoclue state=present
+
 - name: Setup redshift for display temperature
   when: display_temperature == 'redshift'
   block:
