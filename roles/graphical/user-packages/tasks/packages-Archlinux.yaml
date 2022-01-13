@@ -10,6 +10,6 @@
   when: aur_additional_packages is defined and (aur_additional_packages|length>0)
 
 - import_role:
-    name: hostsctl
+    name: graphical/hostsctl
   tags:
     - hostsctl

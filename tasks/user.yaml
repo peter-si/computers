@@ -1,7 +1,7 @@
 ---
 - import_role:
-    name: users
+    name: user/users
 
 - import_role:
-    name: dotfiles
+    name: user/dotfiles
 

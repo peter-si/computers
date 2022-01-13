@@ -1,0 +1,3 @@
+---
+dependencies:
+  - { role: desktop-environment/gdm, when: gdm is defined }

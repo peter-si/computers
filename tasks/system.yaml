@@ -3,17 +3,17 @@
     msg: "Running system tasks"
 
 - import_role:
-    name: bootloader
+    name: system/bootloader
   when: bootloader is defined
 
 - import_role:
-    name: base
+    name: system/base
 
 - import_role:
-    name: ntp
+    name: system/ntp
 
 - import_role:
-    name: docker
+    name: system/docker
 
 - import_role:
-    name: filesystems
+    name: system/filesystems

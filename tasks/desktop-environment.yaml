@@ -1,7 +1,7 @@
 ---
 - import_role:
-    name: xfce-i3
+    name: desktop-environment/xfce-i3
   when: desktop_environment == 'xfce-i3'
 - import_role:
-    name: sway
+    name: desktop-environment/sway
   when: desktop_environment == 'sway'

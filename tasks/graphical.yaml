@@ -1,34 +1,40 @@
 ---
 - import_role:
-    name: video-drivers
+    name: graphical/video-drivers
 
 - import_role:
-    name: user-packages
+    name: graphical/user-packages
 
 - import_role:
-    name: clipboard
+    name: graphical/clipboard
 
 - import_role:
-    name: logitech
+    name: graphical/logitech
   tags: [logitech]
 
 - import_role:
-    name: media
+    name: graphical/media
 
 - import_role:
-    name: udisks
+    name: graphical/udisks
 
 - import_role:
-    name: pipewire
+    name: graphical/pipewire
 
 - import_role:
-    name: bluetooth
+    name: graphical/bluetooth
   when: bluetooth is defined
 
 - import_role:
-    name: virtualbox
+    name: graphical/display-temperature
+
+- import_role:
+    name: graphical/virtualbox
   tags: [virtualbox]
 
 - import_role:
-    name: nmtrust
+    name: graphical/networkmanager
+
+- import_role:
+    name: graphical/nmtrust
   when: ansible_distribution == 'Archlinux'

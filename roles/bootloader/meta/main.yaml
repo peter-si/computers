@@ -1,3 +1,0 @@
----
-dependencies:
-  - { role: mkinitcpio, when: ansible_distribution == 'Archlinux'}

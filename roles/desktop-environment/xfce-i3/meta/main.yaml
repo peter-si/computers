@@ -1,0 +1,4 @@
+---
+dependencies:
+  - { role: desktop-environment/x }
+  - { role: desktop-environment/lightdm }
