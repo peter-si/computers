@@ -7,7 +7,7 @@
     dest: /root/.gitconfig
 
 - name: Init etckeeper
-  ansible.builtin.command: cmd=etckeeper init
+  ansible.builtin.command: etckeeper init
 
 - name: Commit first config
-  ansible.builtin.command: cmd=etckeeper commit "first commit"
+  ansible.builtin.command: etckeeper commit "first commit"
