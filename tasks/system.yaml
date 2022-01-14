@@ -4,16 +4,21 @@
 
 - import_role:
     name: system/bootloader
+  tags: bootloader
   when: bootloader is defined
 
 - import_role:
     name: system/base
+  tags: base
 
 - import_role:
     name: system/ntp
+  tags: ntp
 
 - import_role:
     name: system/docker
+  tags: docker
 
 - import_role:
     name: system/filesystems
+  tags: filesystems

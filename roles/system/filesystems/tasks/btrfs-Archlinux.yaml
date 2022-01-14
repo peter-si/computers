@@ -20,3 +20,9 @@
 - name: Enable and start filesystem Balance timer
   systemd: name=btrfs-balance.timer enabled=yes
   notify: start filesystem Balance timer
+
+- name: Copy snap-pac configuration
+  become: true
+  copy:
+    src: snap-pac.ini
+    dest: /etc/snap-pac.ini

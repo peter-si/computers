@@ -13,6 +13,7 @@
       - nautilus-terminal
       - seahorse-nautilus
       - swappy
+      - evolution
     state: present
 
 - name: Install Sway aur packages

@@ -1,7 +1,9 @@
 ---
 - import_role:
     name: user/users
+  tags: users
 
 - import_role:
     name: user/dotfiles
+  tags: dotfiles
 

@@ -40,7 +40,7 @@
   tags:
     - libinput
 
-- include: unclutter.yaml
-- include: autorandr.yaml
-- include: srandrd.yaml
-- include: autocutsel.yaml
+- import_tasks: unclutter.yaml
+- import_tasks: autorandr.yaml
+- import_tasks: srandrd.yaml
+- import_tasks: autocutsel.yaml

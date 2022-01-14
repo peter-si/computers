@@ -1,7 +1,10 @@
 ---
 - import_role:
     name: desktop-environment/xfce-i3
+  tags: xfce-i3
   when: desktop_environment == 'xfce-i3'
+
 - import_role:
     name: desktop-environment/sway
+  tags: sway
   when: desktop_environment == 'sway'
