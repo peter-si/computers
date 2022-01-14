@@ -22,22 +22,28 @@
         path: /etc/snapper/configs/root
       register: snapperconfig
 
+    - name: Copy snapper config
+      copy:
+        dest: /etc/snapper/configs/root
+        src: root
+      when: not snapperconfig.stat.exists and not (ansible_virtualization_role == "host" or ansible_virtualization_role == "NA")
+
     - name: Unmount .snapshots dir
       ansible.posix.mount:
         path: /.snapshots
         state: unmounted
-      when: not snapperconfig.stat.exists
+      when: not snapperconfig.stat.exists and (ansible_virtualization_role == "host" or ansible_virtualization_role == "NA")
 
     - name: Remove .snapshots dir
       ansible.builtin.file:
         path: /.snapshots
         state: absent
-      when: not snapperconfig.stat.exists
+      when: not snapperconfig.stat.exists and (ansible_virtualization_role == "host" or ansible_virtualization_role == "NA")
 
     - name: Create snapper config
       ansible.builtin.command: "snapper -c root create-config /"
       become: true
-      when: not snapperconfig.stat.exists
+      when: not snapperconfig.stat.exists and (ansible_virtualization_role == "host" or ansible_virtualization_role == "NA")
   when: btrfs is defined and btrfs == True
 
 - name: Include distribution specific btrfs tools
