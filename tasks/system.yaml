@@ -20,5 +20,9 @@
   tags: docker
 
 - import_role:
+    name: system/etckeeper
+  tags: etckeeper
+
+- import_role:
     name: system/filesystems
   tags: filesystems

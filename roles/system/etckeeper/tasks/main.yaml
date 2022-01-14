@@ -1,0 +1,13 @@
+- name: Install etckeeper
+  ansible.builtin.package: name=etckeeper state=present
+
+- name: Copy git config
+  ansible.builtin.copy:
+    src: gitconfig
+    dest: /root/.gitconfig
+
+- name: Init etckeeper
+  ansible.builtin.command: cmd=etckeeper init
+
+- name: Commit first config
+  ansible.builtin.command: cmd=etckeeper commit "first commit"

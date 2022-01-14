@@ -79,7 +79,7 @@
   file: path=/home/{{ user.name }}/.ssh state=directory owner={{ user.name }} group={{ user.group }} mode=0700
 
 - name: Copy user SSH keys
-  copy: src={{ ssh_user_dir }}/ dest=/home/{{ user.name }}/.ssh mode=600 owner={{ user.name }} group={{ user.group }}
+  ansible.builtin.copy: src={{ ssh_user_dir }}/ dest=/home/{{ user.name }}/.ssh mode=600 owner={{ user.name }} group={{ user.group }}
   when: ssh_user_dir is defined
 
 - name: Add user public key to authorized keys
@@ -98,19 +98,19 @@
     - /etc/systemd/system/user.slice.d/
 
 - name: Override user.service
-  copy:
+  ansible.builtin.copy:
     src: user_service_override.conf
     dest: /etc/systemd/system/user@service.service.d/override.conf
     mode: 0644
 
 - name: Override user.slice
-  copy:
+  ansible.builtin.copy:
     src: user_slice_override.conf
     dest: /etc/systemd/system/user.slice.d/override.conf
     mode: 0644
 
 - name: Configure systemd system.conf
-  lineinfile:
+  ansible.builtin.lineinfile:
     dest: /etc/systemd/system.conf
     regexp: "{{ item.regexp }}"
     line: "{{ item.line }}"
@@ -121,11 +121,11 @@
     - { regexp: 'DefaultTasksAccounting=', line: 'DefaultTasksAccounting=yes' }
 
 - name: Configure oomd.conf
-  blockinfile:
+  ansible.builtin.blockinfile:
     path: /etc/systemd/oomd.conf
 
 - name: Copy oomd.conf
-  copy:
+  ansible.builtin.copy:
     src: oomd.conf
     dest: /etc/systemd/oomd.conf
     mode: 0644

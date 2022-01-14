@@ -9,7 +9,7 @@
     - rebuild bootloader
 
 - name: Enable unprivileged containers for non-root users
-  copy:
+  ansible.builtin.copy:
     src: 99-userns.conf
     dest: /etc/sysctl.d/99-userns.conf
   notify:

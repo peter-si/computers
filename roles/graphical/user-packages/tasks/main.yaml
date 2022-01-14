@@ -16,21 +16,21 @@
       skip: true
 
 - name: Create Protonmail bridge user unit
-  copy:
+  ansible.builtin.copy:
     src: protonmail-bridge.service
     dest: /home/{{ user.name }}/.config/systemd/user/protonmail-bridge.service
     owner: "{{ user.name }}"
     group: "{{ user.group }}"
 
 - name: Create Nextcloud user unit
-  copy:
+  ansible.builtin.copy:
     src: nextcloud.service
     dest: /home/{{ user.name }}/.config/systemd/user/nextcloud.service
     owner: "{{ user.name }}"
     group: "{{ user.group }}"
 
 - name: Configure interfaces for macchiato
-  copy: src=macchiato_default.sh dest=/etc/macchiato.d/{{ item }}.sh
+  ansible.builtin.copy: src=macchiato_default.sh dest=/etc/macchiato.d/{{ item }}.sh
   with_items: "{{ ansible_interfaces }}"
 
 - name: Add user to wireshark group
@@ -40,7 +40,7 @@
   when: browser_chooser is defined
 
 - name: Set epdfview as default PDF viewer
-  lineinfile:
+  ansible.builtin.lineinfile:
     dest: /etc/xdg/mimeapps.list
     regexp: "^application/pdf"
     state: present

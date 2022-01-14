@@ -38,14 +38,14 @@
     - aur
 
 - name: Change sway.desktop for nvidia
-  lineinfile:
+  ansible.builtin.lineinfile:
     path: /usr/share/wayland-sessions/sway.desktop
     line: 'Exec=sway --my-next-gpu-wont-be-nvidia'
     regexp: '^Exec=sway'
   when: '"nvidia" in video_drivers'
 
 - name: Update flavours templates
-  command:
+  ansible.builtin.command:
     cmd: flavours update all
 
 - name: Copy Phpstorm shortcut

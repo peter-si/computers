@@ -1,6 +1,6 @@
 ---
 - name: reload systemd config
-  command: systemctl daemon-reload
+  ansible.builtin.command: systemctl daemon-reload
   when: ansible_virtualization_role == "host" or ansible_virtualization_role == "NA"
 
 - name: start base services

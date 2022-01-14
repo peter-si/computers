@@ -38,7 +38,7 @@
 #    - user
 
 - name: Copy lightdm greeters config
-  copy:
+  ansible.builtin.copy:
     dest: /etc/lightdm/
     src: "{{ item }}"
   with_items:
@@ -46,43 +46,43 @@
     - lightdm-webkit2-greeter.conf
 
 - name: Specify LightDM greeter session
-  lineinfile:
+  ansible.builtin.lineinfile:
     dest: /etc/lightdm/lightdm.conf
     regexp: "^\\#?greeter-session="
     line: "greeter-session=lightdm-webkit2-greeter"
 
 - name: Specify LightDM greeter session wrapper
-  lineinfile:
+  ansible.builtin.lineinfile:
     dest: /etc/lightdm/lightdm.conf
     regexp: "^\\#?session-wrapper="
     line: "session-wrapper=/etc/lightdm/Xsession"
 
 #- name: Specify LightDM greeter greeter setup script
-#  lineinfile:
+#  ansible.builtin.lineinfile:
 #    dest: /etc/lightdm/lightdm.conf
 #    regexp: "^\\#?greeter-setup-script="
 #    line: "greeter-setup-script=/usr/bin/numlockx on"
 #
 #- name: Specify LightDM greeter session setup script
-#  lineinfile:
+#  ansible.builtin.lineinfile:
 #    dest: /etc/lightdm/lightdm.conf
 #    regexp: "^\\#?session-setup-script="
 #    line: "session-setup-script=/usr/bin/numlockx on"
 
 - name: Specify LightDM greeter autologin user
-  lineinfile:
+  ansible.builtin.lineinfile:
     dest: /etc/lightdm/lightdm.conf
     regexp: "^\\#?autologin-user="
     line: "autologin-user={{ user.name }}"
 
 #- name: Specify LightDM greeter autologin session
-#  lineinfile:
+#  ansible.builtin.lineinfile:
 #    dest: /etc/lightdm/lightdm.conf
 #    regexp: "^\\#?autologin-session=i3"
 #    line: "autologin-session=i3"
 
 - name: Add nopasswdlogin to lightdm pam config
-  lineinfile:
+  ansible.builtin.lineinfile:
     dest: /etc/pam.d/lightdm
     line: "auth        sufficient  pam_succeed_if.so user ingroup nopasswdlogin"
     insertafter: "^\\#\\%PAM"
@@ -92,13 +92,13 @@
   systemd: name=lightdm.service enabled=yes
 
 - name: Allow lightdm to login with PAM
-  lineinfile:
+  ansible.builtin.lineinfile:
     line: "+:lightdm:LOCAL"
     insertbefore: '\+:root:LOCAL'
     dest: /etc/security/access.conf
 
 - name: Copy user icon
-  copy:
+  ansible.builtin.copy:
     src: archlinux-user.png
     dest: /usr/share/icons/archlinux-user.png
 
@@ -112,7 +112,7 @@
     mode: 0700
 
 - name: Copy localstorage
-  copy:
+  ansible.builtin.copy:
     src: localstorage
     dest: /var/lib/lightdm/.local/share/webkitgtk
     owner: lightdm

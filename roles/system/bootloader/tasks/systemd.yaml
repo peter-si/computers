@@ -3,31 +3,31 @@
   file: path=/etc/pacman.d/hooks state=directory mode="0755"
 
 - name: Copy pacman hook for bootclt
-  copy:
+  ansible.builtin.copy:
     src: 100-systemd-boot.hook
     dest: /etc/pacman.d/hooks/100-systemd-boot.hook
 
 - name: Install bootclt bootloader
-  command: bootctl install
+  ansible.builtin.command: bootctl install
   ignore_errors: yes
 
 - name: Copy bootctl config
-  template:
+  ansible.builtin.template:
     src: systemd/loader.conf
     dest: '{{ bootloader.path }}/loader/loader.conf'
 
 - name: Copy bootctl Arch linux entry
-  template:
+  ansible.builtin.template:
     src: systemd/arch.conf
     dest: '{{ bootloader.path }}/loader/entries/arch.conf'
 
 - name: Copy bootctl Arch linux fallback entry
-  template:
+  ansible.builtin.template:
     src: systemd/arch.conf
     dest: '{{ bootloader.path }}/loader/entries/arch-fallback.conf'
   vars:
     fallback: true
 
 - name: Update bootclt bootloader
-  command: bootctl update
+  ansible.builtin.command: bootctl update
   ignore_errors: yes

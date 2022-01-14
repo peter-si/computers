@@ -1,6 +1,6 @@
 ---
 - name: Push browser chooser
-  template:
+  ansible.builtin.template:
     src: browser.sh.j2
     dest: /usr/local/bin/browser
     mode: 0755
@@ -11,7 +11,7 @@
     state: directory
 
 - name: Push browser chooser desktop file
-  copy:
+  ansible.builtin.copy:
     src: browser.desktop
     dest: /usr/local/share/applications/browser.desktop
 
@@ -21,7 +21,7 @@
     state: touch
 
 - name: Set rofi browser chooser as default application for relevant mimetypes
-  lineinfile:
+  ansible.builtin.lineinfile:
     dest: /etc/xdg/mimeapps.list
     regexp: "{{ item.regexp }}"
     line: "{{ item.line }}"

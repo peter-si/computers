@@ -6,7 +6,7 @@
     name: rofi-greenclip
 
 - name: copy greenclip.service
-  copy:
+  ansible.builtin.copy:
     src: greenclip.service
     dest: /etc/systemd/user/greenclip.service
 

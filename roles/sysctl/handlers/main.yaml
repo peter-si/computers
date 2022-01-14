@@ -1,4 +1,4 @@
 ---
 - name: reload sysctl
-  command: sysctl --system
+  ansible.builtin.command: sysctl --system
   when: ansible_virtualization_role == "host" or ansible_virtualization_role == "NA"

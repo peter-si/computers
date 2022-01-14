@@ -11,6 +11,6 @@
   listen: systemd-timesyncd configuration changed
 
 - name: Write adjtime
-  command: hwclock --systohc
+  ansible.builtin.command: hwclock --systohc
   when: ansible_virtualization_role == "host" or ansible_virtualization_role == "NA"
   listen: systemd-timesyncd configuration changed

@@ -15,7 +15,7 @@
         state: present
 
     - name: Push Geoclue user service
-      copy: src=geoclue-agent.service dest=/home/{{ user.name }}/.config/systemd/user/geoclue-agent.service
+      ansible.builtin.copy: src=geoclue-agent.service dest=/home/{{ user.name }}/.config/systemd/user/geoclue-agent.service
 
     - name: Create user systemd default.target.wants dir
       file:
@@ -33,7 +33,7 @@
         state: link
 
     - name: Allow RedShift to access geoclue
-      blockinfile:
+      ansible.builtin.blockinfile:
         dest: /etc/geoclue/geoclue.conf
         block: |
           url=https://location.services.mozilla.com/v1/geolocate?key=geoclue
@@ -43,7 +43,7 @@
           users=
 
     - name: Copy the autostart scripts
-      copy: src="/usr/share/applications/redshift-gtk.desktop" dest=/home/{{ user.name }}/.config/autostart/ owner={{ user.name }} group={{ user.group }}
+      ansible.builtin.copy: src="/usr/share/applications/redshift-gtk.desktop" dest=/home/{{ user.name }}/.config/autostart/ owner={{ user.name }} group={{ user.group }}
 
 - name: Setup clight for display temperature
   when: display_temperature == 'clight'
@@ -58,7 +58,7 @@
           - clight-gui-git
 
     - name: Allow clight to access geoclue
-      blockinfile:
+      ansible.builtin.blockinfile:
         dest: /etc/geoclue/geoclue.conf
         block: |
           url=https://location.services.mozilla.com/v1/geolocate?key=geoclue
@@ -67,4 +67,4 @@
           system=false
           users=
     - name: Copy the autostart scripts
-      copy: src="/usr/share/applications/clight-gui.desktop" dest=/home/{{ user.name }}/.config/autostart/ owner={{ user.name }} group={{ user.group }}
+      ansible.builtin.copy: src="/usr/share/applications/clight-gui.desktop" dest=/home/{{ user.name }}/.config/autostart/ owner={{ user.name }} group={{ user.group }}

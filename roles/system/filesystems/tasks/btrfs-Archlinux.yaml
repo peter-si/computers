@@ -21,8 +21,14 @@
   systemd: name=btrfs-balance.timer enabled=yes
   notify: start filesystem Balance timer
 
+- name: Install filesystem packages
+  ansible.builtin.package:
+    name:
+      - snap-pac
+    state: present
+
 - name: Copy snap-pac configuration
   become: true
-  copy:
+  ansible.builtin.copy:
     src: snap-pac.ini
     dest: /etc/snap-pac.ini

@@ -11,7 +11,7 @@
   pacman: name=qrencode state=present
 
 - name: Push qcode script
-  copy: src=qcode.sh dest=/usr/local/bin/qcode mode=0755
+  ansible.builtin.copy: src=qcode.sh dest=/usr/local/bin/qcode mode=0755
 
 - name: Install gtk theme
   pacman:
@@ -34,7 +34,7 @@
   file: path=/usr/share/backgrounds state=directory
 
 - name: Copy backround
-  copy:
+  ansible.builtin.copy:
     dest: /usr/share/backgrounds/fight.jpg
     src: fight.jpg
 

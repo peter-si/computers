@@ -29,13 +29,13 @@
     - user
 
 - name: Enable middle-click scrolling
-  template: src=30-scroll.conf dest=/etc/X11/xorg.conf.d/30-scroll.conf
+  ansible.builtin.template: src=30-scroll.conf dest=/etc/X11/xorg.conf.d/30-scroll.conf
   when: x.middle_click_scroll is defined
   tags:
     - libinput
 
 - name: Copy keyboard config
-  template: src=00-keyboard.conf dest=/etc/X11/xorg.conf.d/00-keyboard.conf
+  ansible.builtin.template: src=00-keyboard.conf dest=/etc/X11/xorg.conf.d/00-keyboard.conf
   when: x.keyboard_model is defined
   tags:
     - libinput

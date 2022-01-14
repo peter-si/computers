@@ -10,7 +10,7 @@
 
 
 - name: Push TLP battery threshold config
-  copy:
+  ansible.builtin.copy:
     src: 20-battery.conf
     dest: /etc/tlp.d/
   notify:
@@ -18,7 +18,7 @@
 
 
 - name: Push TLP radio device config
-  copy:
+  ansible.builtin.copy:
     src: 20-rdw.conf
     dest: /etc/tlp.d/
   notify:
@@ -26,7 +26,7 @@
 
 
 - name: Push TLP PCIe config
-  copy:
+  ansible.builtin.copy:
     src: 20-pcie.conf
     dest: /etc/tlp.d/
   notify:
@@ -34,11 +34,11 @@
 
 
 - name: Mask systemd radio service
-  command: systemctl mask systemd-rfkill.service
+  ansible.builtin.command: systemctl mask systemd-rfkill.service
 
 
 - name: Mask systemd radio socket
-  command: systemctl mask systemd-rfkill.socket
+  ansible.builtin.command: systemctl mask systemd-rfkill.socket
 
 
 - name: Enable TLP

@@ -24,7 +24,7 @@
     name: logiops
 
 - name: Copy logid config
-  copy:
+  ansible.builtin.copy:
     src: logid.cfg
     dest: /etc/logid.cfg
 

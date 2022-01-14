@@ -5,7 +5,7 @@
     state: present
 
 - name: Allow the print admin group to administer CUPS
-  lineinfile:
+  ansible.builtin.lineinfile:
     dest: /etc/cups/cups-files.conf
     regexp: SystemGroup
     state: present

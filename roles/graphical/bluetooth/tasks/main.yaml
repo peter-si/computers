@@ -13,12 +13,12 @@
   file: path=/etc/pipewire/media-session.d/ state=directory mode="0755"
 
 - name: Copy bluez-monitor.conf
-  copy:
+  ansible.builtin.copy:
     src: bluez-monitor.conf
     dest: /etc/pipewire/media-session.d/bluez-monitor.conf
 
 - name: Do not auto power on the bluetooth device
-  command: gsettings set org.blueman.plugins.powermanager auto-power-on false
+  ansible.builtin.command: gsettings set org.blueman.plugins.powermanager auto-power-on false
   become: yes
   become_user: "{{ user.name }}"
 

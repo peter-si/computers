@@ -22,7 +22,7 @@
   when: video_drivers|length > 1
 
 - name: Copy nvidia kernel module config
-  copy: src=nvidia.conf dest=/etc/modprobe.d/nvidia.conf
+  ansible.builtin.copy: src=nvidia.conf dest=/etc/modprobe.d/nvidia.conf
 
 - name: Enable suspend/hibernate services for nvidia
   systemd:
