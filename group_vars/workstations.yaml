@@ -15,6 +15,7 @@ network:
   trusted_uuid: []
 
 nmtrust:
+  enabled: False
   mirrorlist: trusted
   pkgfile: trusted
   nextcloud: trusted
@@ -25,10 +26,10 @@ browser_choices:
   - firefox -P work
   - chromium
 
-browser_chooser: rofi
-clipboard: greenclip
+browser_chooser: wofi
+clipboard: clipman
+desktop_environment: sway
 btrfs: true
-desktop_environment: xfce-i3
 display_temperature: clight
 
 udisks:

@@ -47,4 +47,4 @@
 - import_role:
     name: graphical/nmtrust
   tags: nmtrust
-  when: ansible_distribution == 'Archlinux'
+  when: ansible_distribution == 'Archlinux' and nmtrust.enabled is defined and nmtrust.enabled == True
