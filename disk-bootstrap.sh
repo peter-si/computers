@@ -7,6 +7,8 @@ if [[ "$EUID" -ne 0 ]]; then
 fi
 
 root_pass_file="/tmp/rootPass"
+bw_vault_uuid='91925107-1449-49c1-992d-ae1f00b34532'
+bw_ssh_uuid='f96881f3-c773-445e-b046-ae2401114be3'
 
 function help() {
   echo ""
@@ -23,6 +25,7 @@ function help() {
   echo "Optional parameters (need to be added before other parameters):"
   echo "  h - this help"
   echo "  m - don't run install script, only mount volumes"
+  echo "  b - bitwarden server"
   echo "  i - run only installation"
   echo "  n - no-format disk"
   echo "  k - add key file``"
@@ -42,6 +45,36 @@ banner() {
   echo "$msg"
   echo "$edge"
   echo ""
+}
+
+function ask_bitwarden(){
+  if [[ -n "$bitwardenServer" ]]; then
+    bw config server "$bitwardenServer"
+  fi
+  bw login --check > /dev/null
+  if [[ $? -eq 1 ]]; then
+    BW_SESSION=$(bw login --raw)
+  fi
+  bw unlock --check > /dev/null
+  if [[ $? -eq 1 ]]; then
+    BW_SESSION=$(bw unlock --raw)
+  fi
+  export BW_SESSION
+
+  bw get password "$bw_vault_uuid" > vault_pass
+  bw get attachment id_rsa --itemid "$bw_ssh_uuid" --output /install/.ssh/id_rsa
+  bw get attachment id_rsa.pub --itemid "$bw_ssh_uuid" --output /install/.ssh/id_rsa.pub
+  bw get attachment config --itemid "$bw_ssh_uuid" --output /install/.ssh/config
+  bw get attachment known_hosts --itemid "$bw_ssh_uuid" --output /install/.ssh/known_hosts
+  bw get attachment pnjch_vpn.conf --itemid "$bw_ssh_uuid" --output /install/.ssh/vpn/pnjch_vpn.conf
+  SSH_PASS=$(bw get password "$bw_ssh_uuid")
+  eval $(ssh-agent)
+  echo "$SSH_PASS" | ssh-add /install/.ssh/id_rsa
+  ROOT_PASS=$(bw get password "$host")
+  if [[ $? -eq 0 ]]; then
+    echo "$ROOT_PASS" > $root_pass_file
+  fi
+  ask_root_pass
 }
 
 function ask_root_pass(){
@@ -135,7 +168,10 @@ function install_system() {
     --bind-ro=/sys:/sys \
     --bind-ro=/sys/firmware/efi/efivars:/sys/firmware/efi/efivars \
     --directory=/mnt \
-      ansible-playbook /install/playbook.yaml -i /install/local -l "$host" --extra-vars "user_password=$(cat $root_pass_file) disable_swap=${disableSwap} root_partition=${systemPath} ssh_user_dir='/install/.ssh'"
+      ansible-playbook /install/playbook.yaml \
+        -i /install/local \
+        -l "$host" \
+        --extra-vars "user_password=$(cat $root_pass_file) disable_swap=${disableSwap} root_partition=${systemPath} ssh_user_dir='/install/.ssh'"
 }
 
 function add_key_file() {
@@ -148,7 +184,7 @@ function add_key_file() {
 
 ############################################################################
 
-while getopts ":d:l:nmiksch" opt; do
+while getopts ":d:l:b:nmiksch" opt; do
   case "${opt}" in
   n) noFormat=true ;;
   m) mountOnly=true ;;
@@ -156,6 +192,7 @@ while getopts ":d:l:nmiksch" opt; do
   k) addKeyFile=true ;;
   s) disableSwap=true ;;
   d) diskSize="+${OPTARG}" ;;
+  b) bitwardenServer="+${OPTARG}" ;;
   l) host="${OPTARG}" ;;
   c) noEncrypt=true ;;
   h) help ;;
@@ -182,7 +219,7 @@ else
 fi
 
 if [[ -n "$installOnly" ]]; then
-  ask_root_pass
+  ask_bitwarden
   install_system
   exit
 fi
@@ -210,7 +247,7 @@ if [[ -z "$noFormat" ]]; then
 fi
 
 create_partitions
-ask_root_pass
+ask_bitwarden
 if [[ -z "$noEncrypt" ]]; then
   encrypt_disk
   open_luks

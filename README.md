@@ -39,6 +39,13 @@ To set correct perimissions add
   ["/install/.ssh/id_rsa"]="0:0:600"
 ```
 
+add some additional packages to install
+
+```
+git
+bitwarden-cli
+```
+
 into your `archlive/profiledef.sh`
 
 ## Running

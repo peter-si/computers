@@ -1,0 +1,7 @@
+[git]
+    autoCommit = true
+    autoPush = true
+
+[data]
+    email = "{{ user.email }}"
+    name = "{{ user.username }}"

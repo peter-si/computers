@@ -1,16 +1,4 @@
 ---
-user:
-  name: alulord
-  uid: 1000
-  group: users
-  shell: /usr/bin/zsh
-  log:
-    dir: .log
-    rotate: 8
-  region: Europe
-  city: Bratislava
-  dotfiles: git@github.com:peter-si/dotfiles.git
-
 journal:
   max_size: 500M
 

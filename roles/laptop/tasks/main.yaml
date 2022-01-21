@@ -41,21 +41,19 @@
 - name: Install cmake for battery-stats
   pacman: name=cmake state=present
 
-#- name: Install battery-stats
-#  become: yes
-#  become_user: "{{ user.name }}"
-#  kewlfft.aur.aur: name=battery-stats-git
-#  tags:
-#    - aur
+- name: Install battery-stats
+  become: yes
+  become_user: "{{ user.name }}"
+  kewlfft.aur.aur: name=battery-stats-git
+  tags:
+    - aur
 
-#- name: Install battop
-#  become: yesblueproximity-py3-git
-#  become_user: "{{ user.name }}"
-#  aur:
-#    name: battop
-#    user: "{{ user.name }}"
-#  tags:
-#    - aur
+- name: Install battop
+  become: yes
+  become_user: "{{ user.name }}"
+  kewlfft.aur.aur: name=battop
+  tags:
+    - aur
 
 - name: Install gestures
   when: desktop_environment == 'xfce-i3'
