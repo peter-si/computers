@@ -51,10 +51,8 @@ function ask_bitwarden(){
   if [[ -n "$bitwardenServer" ]]; then
     bw config server "$bitwardenServer"
   fi
-  bw login --check 2>&1 | grep -q "not logged in" && BW_SESSION=$(bw login --raw)
-  bw unlock --check 2>&1 | grep -q "is locked" && BW_SESSION=$(bw unlock --raw)
-  export BW_SESSION
-
+  bw login --check 2>&1 | grep -q "not logged in" && BW_SESSION=$(bw login --raw) && export BW_SESSION
+  bw unlock --check 2>&1 | grep -q "is locked" && BW_SESSION=$(bw unlock --raw) && export BW_SESSION
   bw get --nointeraction --session "$BW_SESSION" password "$bw_vault_uuid" > vault_pass
   bw get --nointeraction --session "$BW_SESSION" attachment id_rsa --itemid "$bw_ssh_uuid" --output /install/.ssh/id_rsa
   bw get --nointeraction --session "$BW_SESSION" attachment id_rsa.pub --itemid "$bw_ssh_uuid" --output /install/.ssh/id_rsa.pub
@@ -163,12 +161,7 @@ function install_system() {
     --bind-ro=/sys:/sys \
     --bind-ro=/sys/firmware/efi/efivars:/sys/firmware/efi/efivars \
     --directory=/mnt \
-      ansible-playbook /install/playbook.yaml \
-        --vault-id project \
-        --vault-password-file vault_pass \
-        --inventory /install/local \
-        --limit "$host" \
-        --extra-vars "user_password=$(cat $root_pass_file) disable_swap=${disableSwap} root_partition=${systemPath} ssh_user_dir='/install/.ssh'"
+      ansible-playbook /install/playbook.yaml --vault-password-file=/install/vault_pass --inventory /install/local --limit "$host" --extra-vars "user_password=$(cat $root_pass_file) disable_swap=${disableSwap} root_partition=${systemPath} ssh_user_dir='/install/.ssh'"
 }
 
 function add_key_file() {
@@ -216,7 +209,6 @@ else
 fi
 
 if [[ -n "$installOnly" ]]; then
-  ask_bitwarden
   install_system
   exit
 fi

@@ -11,7 +11,7 @@ if [[ $? == 0 ]]; then
   exit
 fi
 
-if [[ ! -z "$BW_SESSION" ]]; then
+if [[ -n "$BW_SESSION" ]]; then
   bw get password 91925107-1449-49c1-992d-ae1f00b34532
   exit
 fi
