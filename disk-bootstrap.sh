@@ -51,8 +51,8 @@ function ask_bitwarden(){
   if [[ -n "$bitwardenServer" ]]; then
     bw config server "$bitwardenServer"
   fi
-  bw login --check | grep -q "not logged in" && BW_SESSION=$(bw login --raw)
-  bw unlock --check | grep -q "is locked" && BW_SESSION=$(bw unlock --raw)
+  bw login --check 2>&1 | grep -q "not logged in" && BW_SESSION=$(bw login --raw)
+  bw unlock --check 2>&1 | grep -q "is locked" && BW_SESSION=$(bw unlock --raw)
   export BW_SESSION
 
   bw get --nointeraction --session "$BW_SESSION" password "$bw_vault_uuid" > vault_pass
@@ -61,12 +61,12 @@ function ask_bitwarden(){
   bw get --nointeraction --session "$BW_SESSION" attachment config --itemid "$bw_ssh_uuid" --output /install/.ssh/config
   bw get --nointeraction --session "$BW_SESSION" attachment known_hosts --itemid "$bw_ssh_uuid" --output /install/.ssh/known_hosts
   bw get --nointeraction --session "$BW_SESSION" attachment pnjch_vpn.conf --itemid "$bw_ssh_uuid" --output /install/.ssh/vpn/pnjch_vpn.conf
-  SSH_PASS=$(bw get --raw --nointeraction --session "$BW_SESSION" password "$bw_ssh_uuid")
-  ROOT_PASS=$(bw get --raw --nointeraction --session "$BW_SESSION" password "$host")
-  if echo "$ROOT_PASS" | grep "More than one result" || echo "$ROOT_PASS" | grep "Vault is locked"; then
-    ask_root_pass
-  else
+  SSH_PASS=$(bw get --raw --nointeraction --session "$BW_SESSION" password "$bw_ssh_uuid" 2>> error)
+  ROOT_PASS=$(bw get --raw --nointeraction --session "$BW_SESSION" password "$host" 2>> error)
+  if [[ "$(cat error)" == "" ]]; then
     echo "$ROOT_PASS" > $root_pass_file
+  else
+    ask_root_pass
   fi
   eval $(ssh-agent)
   echo "$SSH_PASS" | ssh-add /install/.ssh/id_rsa
