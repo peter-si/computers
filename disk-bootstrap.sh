@@ -51,30 +51,29 @@ function ask_bitwarden(){
   if [[ -n "$bitwardenServer" ]]; then
     bw config server "$bitwardenServer"
   fi
-  bw login --check > /dev/null
-  if [[ $? -eq 1 ]]; then
+  if [[ bw login --check | grep "not logged in" ]]; then
     BW_SESSION=$(bw login --raw)
   fi
-  bw unlock --check > /dev/null
-  if [[ $? -eq 1 ]]; then
+  if [[ bw unlock --check | grep "is locked" ]]; then
     BW_SESSION=$(bw unlock --raw)
   fi
   export BW_SESSION
 
-  bw get password "$bw_vault_uuid" > vault_pass
-  bw get attachment id_rsa --itemid "$bw_ssh_uuid" --output /install/.ssh/id_rsa
-  bw get attachment id_rsa.pub --itemid "$bw_ssh_uuid" --output /install/.ssh/id_rsa.pub
-  bw get attachment config --itemid "$bw_ssh_uuid" --output /install/.ssh/config
-  bw get attachment known_hosts --itemid "$bw_ssh_uuid" --output /install/.ssh/known_hosts
-  bw get attachment pnjch_vpn.conf --itemid "$bw_ssh_uuid" --output /install/.ssh/vpn/pnjch_vpn.conf
-  SSH_PASS=$(bw get password "$bw_ssh_uuid")
-  eval $(ssh-agent)
-  echo "$SSH_PASS" | ssh-add /install/.ssh/id_rsa
-  ROOT_PASS=$(bw get password "$host")
-  if [[ $? -eq 0 ]]; then
+  bw get --nointeraction --session "$BW_SESSION" password "$bw_vault_uuid" > vault_pass
+  bw get --nointeraction --session "$BW_SESSION" attachment id_rsa --itemid "$bw_ssh_uuid" --output /install/.ssh/id_rsa
+  bw get --nointeraction --session "$BW_SESSION" attachment id_rsa.pub --itemid "$bw_ssh_uuid" --output /install/.ssh/id_rsa.pub
+  bw get --nointeraction --session "$BW_SESSION" attachment config --itemid "$bw_ssh_uuid" --output /install/.ssh/config
+  bw get --nointeraction --session "$BW_SESSION" attachment known_hosts --itemid "$bw_ssh_uuid" --output /install/.ssh/known_hosts
+  bw get --nointeraction --session "$BW_SESSION" attachment pnjch_vpn.conf --itemid "$bw_ssh_uuid" --output /install/.ssh/vpn/pnjch_vpn.conf
+  SSH_PASS=$(bw get --raw --nointeraction --session "$BW_SESSION" password "$bw_ssh_uuid")
+  ROOT_PASS=$(bw get --raw --nointeraction --session "$BW_SESSION" password "$host")
+  if [[ cat "$ROOT_PASS" | grep "More than one result" || cat "$ROOT_PASS" | grep "Vault is locked" ]]; then
+    ask_root_pass
+  else
     echo "$ROOT_PASS" > $root_pass_file
   fi
-  ask_root_pass
+  eval $(ssh-agent)
+  echo "$SSH_PASS" | ssh-add /install/.ssh/id_rsa
 }
 
 function ask_root_pass(){
@@ -169,8 +168,10 @@ function install_system() {
     --bind-ro=/sys/firmware/efi/efivars:/sys/firmware/efi/efivars \
     --directory=/mnt \
       ansible-playbook /install/playbook.yaml \
-        -i /install/local \
-        -l "$host" \
+        --vault-id project \
+        --vault-password-file vault_pass \
+        --inventory /install/local \
+        --limit "$host" \
         --extra-vars "user_password=$(cat $root_pass_file) disable_swap=${disableSwap} root_partition=${systemPath} ssh_user_dir='/install/.ssh'"
 }
 
@@ -192,7 +193,7 @@ while getopts ":d:l:b:nmiksch" opt; do
   k) addKeyFile=true ;;
   s) disableSwap=true ;;
   d) diskSize="+${OPTARG}" ;;
-  b) bitwardenServer="+${OPTARG}" ;;
+  b) bitwardenServer="${OPTARG}" ;;
   l) host="${OPTARG}" ;;
   c) noEncrypt=true ;;
   h) help ;;
@@ -242,12 +243,12 @@ if [[ -z "$host" ]]; then
   help
 fi
 
+ask_bitwarden
 if [[ -z "$noFormat" ]]; then
   clear_disk
 fi
 
 create_partitions
-ask_bitwarden
 if [[ -z "$noEncrypt" ]]; then
   encrypt_disk
   open_luks
