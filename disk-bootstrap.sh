@@ -51,12 +51,8 @@ function ask_bitwarden(){
   if [[ -n "$bitwardenServer" ]]; then
     bw config server "$bitwardenServer"
   fi
-  if bw login --check | grep "not logged in"; then
-    BW_SESSION=$(bw login --raw)
-  fi
-  if bw unlock --check | grep "is locked"; then
-    BW_SESSION=$(bw unlock --raw)
-  fi
+  bw login --check | grep -q "not logged in" && BW_SESSION=$(bw login --raw)
+  bw unlock --check | grep -q "is locked" && BW_SESSION=$(bw unlock --raw)
   export BW_SESSION
 
   bw get --nointeraction --session "$BW_SESSION" password "$bw_vault_uuid" > vault_pass
