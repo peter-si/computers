@@ -1,8 +1,12 @@
 ---
 - name: Create Chezmoi config dir
-  become_user: "{{ user.name }}"
-  become: yes
-  file: path="/home/{{ user.name }}/.config/chezmoi" state=directory mode=0755 recurse=yes
+  file:
+    path: "/home/{{ user.name }}/.config/chezmoi"
+    state: directory
+    mode: 0775
+    recurse: yes
+    owner: "{{ user.name }}"
+    group: "{{ user.group }}"
 
 - name: Create chezmoi config
   template:
@@ -15,13 +19,13 @@
   ansible.builtin.command: "chezmoi init --cache /home/{{ user.name }}/.cache/chezmoi --source /home/{{ user.name }}/.local/share/chezmoi -D /home/{{ user.name }} --no-tty --force --apply --verbose {{ user.dotfiles }}"
 
 - name: Creates directory for runable scripts
-  become_user: "{{ user.name }}"
-  become: yes
   file:
     path: "/home/{{ user.name }}/.local/bin"
     state: directory
     mode: 0775
     recurse: yes
+    owner: "{{ user.name }}"
+    group: "{{ user.group }}"
 
 - name: Copy zshrc to root
   synchronize:
