@@ -83,8 +83,8 @@
 - name: Limit amount of processes
   ansible.builtin.blockinfile:
     block: |
-      * soft nproc 2500
-      * hard nproc 3000
+      * soft nproc 5000
+      * hard nproc 8000
     path: /etc/security/limits.conf
 
 - import_tasks: locale.yaml
