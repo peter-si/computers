@@ -166,3 +166,4 @@ aur_additional_packages:
   - aspell-sk
   - spotify
   - minecraft-launcher
+  - cpupower-gui
