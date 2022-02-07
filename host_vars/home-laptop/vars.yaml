@@ -2,4 +2,5 @@
 hostname: aluwork
 
 video_drivers:
+  - amdgpu
   - nvidia

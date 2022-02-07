@@ -28,7 +28,7 @@ browser_choices:
 
 browser_chooser: wofi
 clipboard: clipman
-desktop_environment: sway
+desktop_environment: xfce-i3
 btrfs: true
 display_temperature: clight
 

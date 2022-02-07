@@ -44,6 +44,14 @@
     - import_role:
         name: tlp
     - import_role:
+        name: laptop
+
+- hosts: home-laptop
+  become: yes
+  tasks:
+    - import_role:
+        name: tlp
+    - import_role:
         name: asus
     - import_role:
         name: laptop
