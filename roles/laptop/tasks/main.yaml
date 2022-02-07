@@ -55,6 +55,13 @@
   tags:
     - aur
 
+- name: Install cpupower-gui
+  become: yes
+  become_user: "{{ user.name }}"
+  kewlfft.aur.aur: name=cpupower-gui
+  tags:
+    - aur
+
 - name: Install gestures
   when: desktop_environment == 'xfce-i3'
   block:

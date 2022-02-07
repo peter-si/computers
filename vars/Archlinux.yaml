@@ -131,6 +131,7 @@ additional_packages_distro:
 
 aur_base_packages:
   - yay
+  - atool
   - ctop
   - zplug
   - downgrade
